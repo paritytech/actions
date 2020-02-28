@@ -9,8 +9,8 @@ jobs:
      - name: send message
        uses: s3krit/matrix-message-action@v0.0.1
        with:
-         room_id: ${{ secrets.PRIVATE_ROOM_ID }}
+         room_id: ${{ secrets.MATRIX_ROOM_ID }}
          access_token: ${{ secrets.MATRIX_ACCESS_TOKEN }}
-         message: "Hello, Text"
-         formatted_message: "<strong>Hello</strong><br /><em>world!</em>"
+         message: "GitHub Actions test for notifications, please Ignore"
+         formatted_message: "<strong>Please</strong><br /><em>ignore!</em>"
          server: "matrix.parity.io"
