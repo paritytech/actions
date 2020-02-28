@@ -2,6 +2,8 @@ name: Send a text every minute
 on:
   release:
     types:
+      - created
+      - edited
       - prereleased
       - published
 jobs:
