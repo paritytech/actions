@@ -2,7 +2,6 @@ name: Send a text every minute
 on:
   release:
     types:
-      - created
       - edited
       - prereleased
       - published
@@ -16,5 +15,5 @@ jobs:
          room_id: ${{ secrets.MATRIX_ROOM_ID }}
          access_token: ${{ secrets.MATRIX_ACCESS_TOKEN }}
          message: "GitHub Actions test for notifications, please Ignore"
-         formatted_message: "<strong>${{github.event.repository.full_name}}:</strong>A release has been ${{github.event.action}}<br/>Release version <a href=\"${{github.event.release.html_url}}\">${{github.event.release.tag_name}}</a><br/>Description:<br/>${{github.event.release.body}}<br/>Body: ${{github.event.release}}"
-         server: "matrix.parity.io"
+         formatted_message: ""
+         server: "matrix.parity.io"<strong>${{github.event.repository.full_name}}:</strong> A release has been ${{github.event.action}}<br/>Release version <a href=\"${{github.event.release.html_url}}\">${{github.event.release.tag_name}}</a><br/><br/>Description:<br/>${{github.event.release.body}}<br/>Body HTML??: ${{github.event.release.body_html}}
