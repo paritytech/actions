@@ -14,5 +14,5 @@ jobs:
          room_id: ${{ secrets.MATRIX_ROOM_ID }}
          access_token: ${{ secrets.MATRIX_ACCESS_TOKEN }}
          message: "GitHub Actions test for notifications, please Ignore"
-         formatted_message: "<strong>${{github.event.repository.full_name}}:  ${{github.event.repository.html_url}}  <br/>GitHub Actions BOT Test</strong><br/>"
+         formatted_message: "<strong>${{github.release.html_url}}:  ${{github.event.release.tag_name}} <br/>Without event: ${{github.release.body}} <br/>With event: ${{github.event.release.body}} GitHub Actions BOT Test</strong><br/>"
          server: "matrix.parity.io"
