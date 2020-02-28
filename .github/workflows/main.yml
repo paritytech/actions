@@ -2,7 +2,8 @@ name: Send a text every minute
 on:
   release:
     types:
-      - created
+      - prereleased
+      - published
 jobs:
   ping_matrix:
    runs-on: ubuntu-latest
@@ -13,5 +14,5 @@ jobs:
          room_id: ${{ secrets.MATRIX_ROOM_ID }}
          access_token: ${{ secrets.MATRIX_ACCESS_TOKEN }}
          message: "GitHub Actions test for notifications, please Ignore"
-         formatted_message: "<strong>GitHub Actions BOT Test</strong>"
+         formatted_message: "<strong>${{github.repository.full_name}}:  ${{github.repository.html_url}}  <br/>GitHub Actions BOT Test</strong><br/>"
          server: "matrix.parity.io"
