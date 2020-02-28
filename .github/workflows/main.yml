@@ -1,4 +1,4 @@
-name: Send a hello world to matrix every 5 minutes
+name: Send a text every minute
 on:
   schedule:
     - cron: '*/1 * * * *'
@@ -11,6 +11,6 @@ jobs:
        with:
          room_id: ${{ secrets.PRIVATE_ROOM_ID }}
          access_token: ${{ secrets.MATRIX_ACCESS_TOKEN }}
-         message: "Hello, world"
+         message: "Hello, Text"
          formatted_message: "<strong>Hello</strong><br /><em>world!</em>"
-         server: "matrix.org"
+         server: "matrix.parity.io"
