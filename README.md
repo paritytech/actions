@@ -1,2 +1,3 @@
-# bottest
-Bot, trigger action, please.
+# Actions
+
+A collection of custom GitHub actions.
