@@ -10,10 +10,9 @@ jobs:
    runs-on: ubuntu-latest
    steps:
      - name: send message
-       uses: s3krit/matrix-message-action@master
+       uses: s3krit/matrix-message-action@v0.0.2
        with:
          room_id: ${{ secrets.MATRIX_ROOM_ID }}
          access_token: ${{ secrets.MATRIX_ACCESS_TOKEN }}
-         message: "GitHub Actions test for notifications, please Ignore"
-         formatted_message: "<strong>${{github.event.repository.full_name}}:</strong> A release has been ${{github.event.action}}<br/>Release version <a href=\"${{github.event.release.html_url}}\">${{github.event.release.tag_name}}</a><br/><br/>Description:<br/>${{github.event.release.body}}<br/>Body HTML??: ${{github.event.release.body_html}}"
+         message: "***${{github.event.repository.full_name}}:*** A release has been ${{github.event.action}}<br/>Release version [${{github.event.release.tag_name}}](${{github.event.release.html_url}})<br/><br/>Description:<br/>${{github.event.release.body}}"
          server: "matrix.parity.io"
