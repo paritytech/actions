@@ -19,7 +19,7 @@ inputs:
   arch:
     description: >
       arch
-    required: true
+
   version:
     description: >
       version
@@ -48,8 +48,8 @@ outputs:
 runs:
   using: "composite"
   steps:
-    - id: foo
-      name: Foo
+    - id: fake
+      name: Fake upload
       shell: bash
       run: |
-        echo FOO
+        echo "FAKE Upload of ${{ inputs.file }}"
