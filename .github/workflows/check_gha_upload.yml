@@ -27,11 +27,12 @@ jobs:
         with:
           path: action
 
-      - name: Prepare test file {{ matrix.file }}
+      - name: Prepare test file ${{ matrix.file }}
         run: |
-          echo "foobar" > {{ matrix.file }}
+          echo "foobar" > ${{ matrix.file }}
+          ls -al --color
 
-      - name: Upload file {{ matrix.file }}
+      - name: Upload file ${{ matrix.file }}
         uses: ./action/release/artifacts/upload
         with:
           project: gha-artifacts-upload-tests
