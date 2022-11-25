@@ -1,0 +1,27 @@
+name: Download
+description: Download artifacts
+author: chevdor
+branding:
+  icon: "package"
+  color: "blue"
+
+inputs:
+  chain:
+    description: >
+      Name of the chain, ie. polkadot
+    required: true
+
+outputs:
+  json:
+    description: >
+      Foobar
+    value: ${{ steps.build.outputs.json }}
+
+runs:
+  using: "composite"
+  steps:
+    - id: foo
+      name: Foo
+      shell: bash
+      run: |
+        echo FOO

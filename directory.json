@@ -1,0 +1,68 @@
+{
+  "directory": [
+    {
+      "name": "Download",
+      "description": "Download artifacts",
+      "author": "chevdor",
+      "branding": {
+        "icon": "package",
+        "color": "blue"
+      },
+      "inputs": {
+        "chain": {
+          "description": "Name of the chain, ie. polkadot\n",
+          "required": true
+        }
+      },
+      "outputs": {
+        "json": {
+          "description": "Foobar\n",
+          "value": "${{ steps.build.outputs.json }}"
+        }
+      },
+      "runs": {
+        "using": "composite",
+        "steps": [
+          {
+            "id": "foo",
+            "name": "Foo",
+            "shell": "bash",
+            "run": "echo FOO\n"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Upload",
+      "description": "Upload artifacts",
+      "author": "chevdor",
+      "branding": {
+        "icon": "package",
+        "color": "blue"
+      },
+      "inputs": {
+        "chain": {
+          "description": "Name of the chain, ie. polkadot\n",
+          "required": true
+        }
+      },
+      "outputs": {
+        "json": {
+          "description": "Foobar\n",
+          "value": "${{ steps.build.outputs.json }}"
+        }
+      },
+      "runs": {
+        "using": "composite",
+        "steps": [
+          {
+            "id": "foo",
+            "name": "Foo",
+            "shell": "bash",
+            "run": "echo FOO\n"
+          }
+        ]
+      }
+    }
+  ]
+}

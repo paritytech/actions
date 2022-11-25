@@ -1,0 +1,55 @@
+name: Upload
+description: Upload artifacts
+author: chevdor
+branding:
+  icon: "package"
+  color: "green"
+
+inputs:
+  public:
+    description: >
+      Whether the artifacts should be uploaded as public or not. Please note that some backends do not allow private uploads.
+    default: "false"
+    required: true
+
+  project:
+    description: >
+      Project
+    required: true
+  arch:
+    description: >
+      arch
+    required: true
+  version:
+    description: >
+      version
+    required: true
+  file:
+    description: >
+      input file
+    required: true
+
+  # Checksums
+  md5:
+    description: >
+      Should generate a md5 checksum ?
+    default: "false"
+  sha256:
+    description: >
+      Should generate a sha256 checksum ?
+    default: "false"
+
+outputs:
+  url:
+    description: >
+      URL of the uploaded artifact
+    value: ${{ steps.upload.outputs.json }}
+
+runs:
+  using: "composite"
+  steps:
+    - id: foo
+      name: Foo
+      shell: bash
+      run: |
+        echo FOO
