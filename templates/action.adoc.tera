@@ -1,0 +1,31 @@
+== {{ name }}
+
+{{ description }}
+
+=== Inputs
+
+{% if inputs %}
+{% for name, input in inputs %}
+{% if input.required %}
+- `{{ name }}`: {{ input.description }}
+{% else %}
+- `[{{ name }}]`: {{ input.description }}
+{% endif %}
+{% endfor %}
+{% else %}
+No inputs.
+{% endif %}
+
+=== Outputs
+
+{% if outputs %}
+{% for name, output in outputs %}
+{% if output.required %}
+- `{{ name }}`: {{ output.description }}
+{% else %}
+- `[{{ name }}]`: {{ output.description }}
+{% endif %}
+{% endfor %}
+{% else %}
+No outputs.
+{% endif %}

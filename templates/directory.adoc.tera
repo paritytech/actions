@@ -1,5 +1,5 @@
 == GHA Directory
 {# -#}
-{%- for gha in directory -%}
-- `{{ gha.name}}` from `{{gha.author}}`: {{gha.description}}x{#- #}y
+{%- for gha in directory | sort(attribute="name") -%}
+- `{{ gha.name}}` from `{{gha.author}}`: {{gha.description}}{#- #}
 {% endfor -%}

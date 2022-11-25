@@ -1,6 +1,6 @@
 name: Download
 description: Download artifacts
-author: chevdor
+author: Wilfried Kopp <chevdor@gmail.com>
 branding:
   icon: "package"
   color: "blue"

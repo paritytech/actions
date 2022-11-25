@@ -1,6 +1,6 @@
 name: Upload
 description: Upload artifacts
-author: chevdor
+author: Wilfried Kopp <chevdor@gmail.com>
 branding:
   icon: "package"
   color: "green"

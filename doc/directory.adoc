@@ -1,4 +1,5 @@
 == GHA Directory
-- `Download` from `chevdor`: Download artifactsxy
-- `Upload` from `chevdor`: Upload artifactsxy
+- `Download` from `Wilfried Kopp <chevdor@gmail.com>`: Download artifacts
+- `Upload` from `Wilfried Kopp <chevdor@gmail.com>`: Upload artifacts
+- `matrix-message` from `Martin Pugh (pugh@s3kr.it)`: Send a message to a matrix channel
 

@@ -1,9 +1,44 @@
 {
   "directory": [
     {
+      "name": "matrix-message",
+      "description": "Send a message to a matrix channel",
+      "author": "Martin Pugh (pugh@s3kr.it)",
+      "inputs": {
+        "server": {
+          "description": "Matrix server hostname",
+          "default": "matrix.org",
+          "required": false
+        },
+        "room_id": {
+          "description": "Matrix room ID, specified in channels advanced settings",
+          "default": "",
+          "required": true
+        },
+        "access_token": {
+          "description": "Access token required to send to matrix server",
+          "default": "",
+          "required": true
+        },
+        "message": {
+          "description": "Message to send in plaintext format",
+          "default": "",
+          "required": true
+        }
+      },
+      "runs": {
+        "using": "docker",
+        "image": "Dockerfile"
+      },
+      "branding": {
+        "icon": "message-square",
+        "color": "gray-dark"
+      }
+    },
+    {
       "name": "Download",
       "description": "Download artifacts",
-      "author": "chevdor",
+      "author": "Wilfried Kopp <chevdor@gmail.com>",
       "branding": {
         "icon": "package",
         "color": "blue"
@@ -35,21 +70,46 @@
     {
       "name": "Upload",
       "description": "Upload artifacts",
-      "author": "chevdor",
+      "author": "Wilfried Kopp <chevdor@gmail.com>",
       "branding": {
         "icon": "package",
-        "color": "blue"
+        "color": "green"
       },
       "inputs": {
-        "chain": {
-          "description": "Name of the chain, ie. polkadot\n",
+        "public": {
+          "description": "Whether the artifacts should be uploaded as public or not. Please note that some backends do not allow private uploads.\n",
+          "default": "false",
           "required": true
+        },
+        "project": {
+          "description": "Project\n",
+          "required": true
+        },
+        "arch": {
+          "description": "arch\n",
+          "required": true
+        },
+        "version": {
+          "description": "version\n",
+          "required": true
+        },
+        "file": {
+          "description": "input file\n",
+          "required": true
+        },
+        "md5": {
+          "description": "Should generate a md5 checksum ?\n",
+          "default": "false"
+        },
+        "sha256": {
+          "description": "Should generate a sha256 checksum ?\n",
+          "default": "false"
         }
       },
       "outputs": {
-        "json": {
-          "description": "Foobar\n",
-          "value": "${{ steps.build.outputs.json }}"
+        "url": {
+          "description": "URL of the uploaded artifact\n",
+          "value": "${{ steps.upload.outputs.json }}"
         }
       },
       "runs": {

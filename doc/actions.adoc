@@ -1,0 +1,4 @@
+
+include::.././release/matrix-message-action/doc.adoc[]
+include::.././release/artifacts/download/doc.adoc[]
+include::.././release/artifacts/upload/doc.adoc[]
