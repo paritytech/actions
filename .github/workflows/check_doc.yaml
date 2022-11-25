@@ -27,7 +27,7 @@ jobs:
           tar xf ${{ runner.temp }}/just.tar.gz && mv just /usr/local/bin && \
           wget -O ${{ runner.temp }}/tera.deb https://github.com/chevdor/tera-cli/releases/download/v${TERA_VERSION}/tera-cli_linux_amd64.deb && \
           sudo dpkg -i ${{ runner.temp }}/tera.deb && \
-          wget -O ${{ runner.temp }}/pandoc.deb https://github.com/jgm/pandoc/releases/download/2.19.2/pandoc-2.19.2-linux-amd64.tar.gz && \
+          wget -O ${{ runner.temp }}/pandoc.deb https://github.com/jgm/pandoc/releases/download/2.19.2/pandoc-2.19.2-1-amd64.deb && \
           sudo dpkg -i ${{ runner.temp }}/pandoc.deb && \
           wget -O /usr/local/bin/yq https://github.com/mikefarah/yq/releases/download/v${YQ_VERSION}/yq_linux_amd64
           sudo apt-get install -y asciidoctor
