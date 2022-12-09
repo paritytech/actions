@@ -1,3 +1,3 @@
-# Actions
+# Github Actions
 
-A collection of custom GitHub actions.
+A collection of custom GitHub actions and examples.
