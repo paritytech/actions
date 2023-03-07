@@ -6,6 +6,26 @@ branding:
   color: "green"
 
 inputs:
+  AWS_ACCESS_KEY_ID:
+    description: >
+      The AWS Key to be used. Make sure it has the required access rights
+    required: true
+
+  AWS_SECRET_ACCESS_KEY:
+    description: >
+      The AWS secret key
+    required: true
+
+  AWS_BUCKET:
+    description: >
+      AWS Bucket
+    required: true
+
+  AWS_DEFAULT_REGION:
+    description: >
+      The AWS region
+    required: true
+
   public:
     description: >
       NOT IMPLEMENTED YET
@@ -82,10 +102,10 @@ runs:
       env:
         IMAGE: ${{ inputs.image }}
         FILE: ${{ inputs.file }}
-        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        AWS_DEFAULT_REGION: 'us-east-1'
-        AWS_BUCKET: chevdor
+        AWS_ACCESS_KEY_ID: ${{ inputs.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ inputs.AWS_SECRET_ACCESS_KEY }}
+        AWS_DEFAULT_REGION: ${{ inputs.AWS_DEFAULT_REGION }}
+        AWS_BUCKET: ${{ inputs.AWS_BUCKET }}
         PRODUCT: ${{ inputs.product }}
         ARCH: ${{ inputs.arch }}
         VERSION: ${{ inputs.version }}
