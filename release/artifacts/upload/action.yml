@@ -8,36 +8,56 @@ branding:
 inputs:
   public:
     description: >
+      NOT IMPLEMENTED YET
       Whether the artifacts should be uploaded as public or not. Please note that some backends do not allow private uploads.
     default: "false"
     required: true
 
-  project:
+  product:
     description: >
       Project
     required: true
+
   arch:
     description: >
       arch
+    required: true
 
   version:
     description: >
       version
     required: true
+
   file:
     description: >
       input file
     required: true
 
+  labels:
+    description: >
+      NOT IMPLEMENTED YET
+      An array of labels
+    required: false
+
   # Checksums
   md5:
     description: >
+      NOT IMPLEMENTED YET
       Should generate a md5 checksum ?
     default: "false"
+
   sha256:
     description: >
+      NOT IMPLEMENTED YET
       Should generate a sha256 checksum ?
     default: "false"
+
+  image:
+    description: >
+      Docker image to be used. This is usually not something you want to change
+      unless you know what you are doing
+    required: true
+    default: "paritytech/releng-scripts"
 
 outputs:
   url:
@@ -48,8 +68,43 @@ outputs:
 runs:
   using: "composite"
   steps:
-    - id: fake
-      name: Fake upload
+    - name: Fetch Docker image
+      shell: bash
+      env:
+        IMAGE: ${{ inputs.image }}
+      run: |
+        docker pull $IMAGE
+        docker images
+        docker run --rm -it paritytech/releng-scripts version
+
+    - name: Upload ${{ inputs.file }}
+      id: upload
+      env:
+        IMAGE: ${{ inputs.image }}
+        FILE: ${{ inputs.file }}
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        AWS_DEFAULT_REGION: 'us-east-1'
+        AWS_BUCKET: chevdor
+        PRODUCT: ${{ inputs.product }}
+        ARCH: ${{ inputs.arch }}
+        VERSION: ${{ inputs.version }}
       shell: bash
       run: |
-        echo "FAKE Upload of ${{ inputs.file }}"
+        alias rs="docker run --rm -it -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_DEFAULT_REGION -e AWS_BUCKET $IMAGE"
+        alias aws="docker run --rm -it  -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_DEFAULT_REGION -e AWS_BUCKET -e AWS_CONFIG_FILE paritytech/awscli"
+        echo "Running image version: $(rs version)"
+        path="${PRODUCT}/${VERSION}/${ARCH}"
+
+        ls -al
+        echo "Upload of $FILE"
+        rs upload \
+          --bucket "${AWS_BUCKET}" \
+          custom \
+          ${path} \
+          s3 \
+          "${FILE}"
+
+        # TODO: we don't want to see ALL
+        awscli aws s3 ls ${AWS_BUCKET} --summarize
+        awscli aws s3 ls ${AWS_BUCKET} --human-readable --recursive
