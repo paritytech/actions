@@ -111,6 +111,8 @@ runs:
         VERSION: ${{ inputs.version }}
       shell: bash
       run: |
+        shopt -s expand_aliases
+
         alias rs="docker run --rm -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_DEFAULT_REGION -e AWS_BUCKET $IMAGE"
         alias aws="docker run --rm  -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_DEFAULT_REGION -e AWS_BUCKET -e AWS_CONFIG_FILE paritytech/awscli"
         echo "Running image version: $(rs version)"
