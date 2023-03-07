@@ -115,7 +115,7 @@ runs:
         VOL=/data
 
         alias rs="docker run --rm -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_DEFAULT_REGION -e AWS_BUCKET -v $PWD:$VOL $IMAGE"
-        alias aws="docker run --rm  -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_DEFAULT_REGION -e AWS_BUCKET -e AWS_CONFIG_FILE paritytech/awscli"
+        alias awscli="docker run --rm  -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_DEFAULT_REGION -e AWS_BUCKET -e AWS_CONFIG_FILE paritytech/awscli"
         echo "Running image version: $(rs version)"
 
         if [[ ! -z "$ARCH" ]]; then
@@ -135,5 +135,6 @@ runs:
           "$VOL/${FILE}"
 
         # TODO: we don't want to see ALL
+        echo "Check: https://${AWS_BUCKET}.s3.${AWS_DEFAULT_REGION}.amazonaws.com/index.html
         awscli aws s3 ls ${AWS_BUCKET} --summarize
         awscli aws s3 ls ${AWS_BUCKET} --human-readable --recursive
