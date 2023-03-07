@@ -135,6 +135,6 @@ runs:
           "$VOL/${FILE}"
 
         # TODO: we don't want to see ALL
-        echo "Check: https://${AWS_BUCKET}.s3.${AWS_DEFAULT_REGION}.amazonaws.com/index.html
+        echo "Check: https://${AWS_BUCKET}.s3.${AWS_DEFAULT_REGION}.amazonaws.com/index.html"
         awscli aws s3 ls ${AWS_BUCKET} --summarize
         awscli aws s3 ls ${AWS_BUCKET} --human-readable --recursive
