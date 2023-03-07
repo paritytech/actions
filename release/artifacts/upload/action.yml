@@ -112,8 +112,9 @@ runs:
       shell: bash
       run: |
         shopt -s expand_aliases
+        VOL=/data
 
-        alias rs="docker run --rm -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_DEFAULT_REGION -e AWS_BUCKET $IMAGE"
+        alias rs="docker run --rm -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_DEFAULT_REGION -e AWS_BUCKET -v $PWD:$VOL $IMAGE"
         alias aws="docker run --rm  -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_DEFAULT_REGION -e AWS_BUCKET -e AWS_CONFIG_FILE paritytech/awscli"
         echo "Running image version: $(rs version)"
 
@@ -131,7 +132,7 @@ runs:
           custom \
           ${upload_path} \
           s3 \
-          "${FILE}"
+          "$VOL/${FILE}"
 
         # TODO: we don't want to see ALL
         awscli aws s3 ls ${AWS_BUCKET} --summarize
