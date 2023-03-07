@@ -59,6 +59,12 @@ inputs:
       An array of labels
     required: false
 
+  overwrite:
+    description: >
+      Allows overwriting if the file already exists
+    required: false
+    default: "false"
+
   # Checksums
   md5:
     description: >
@@ -109,6 +115,7 @@ runs:
         PRODUCT: ${{ inputs.product }}
         ARCH: ${{ inputs.arch }}
         VERSION: ${{ inputs.version }}
+        OVERWRITE: ${{inputs.overwrite}}
       shell: bash
       run: |
         shopt -s expand_aliases
@@ -117,6 +124,13 @@ runs:
         alias rs="docker run --rm -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_DEFAULT_REGION -e AWS_BUCKET -v $PWD:$VOL $IMAGE"
         alias awscli="docker run --rm  -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_DEFAULT_REGION -e AWS_BUCKET -e AWS_CONFIG_FILE paritytech/awscli"
         echo "Running image version: $(rs version)"
+        echo "Overwrite: ${OVERWRITE}"
+
+        if [[ "$OVERWRITE" == "true" ]]; then
+          OVERWRITE_ARGS=" --overwrite "
+        else
+          OVERWRITE_ARGS=""
+        fi
 
         if [[ ! -z "$ARCH" ]]; then
           upload_path="${PRODUCT}/${VERSION}/${ARCH}"
@@ -127,7 +141,7 @@ runs:
 
         ls -al
         echo "Upload of $FILE"
-        rs upload \
+        rs upload ${OVERWRITE_ARGS} \
           --bucket "${AWS_BUCKET}" \
           custom \
           ${upload_path} \

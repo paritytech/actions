@@ -42,3 +42,4 @@ jobs:
           AWS_DEFAULT_REGION: eu-central-1
           AWS_BUCKET: test-parity-release-engineering
           file: "${{ matrix.file }}"
+          overwrite: true
