@@ -41,7 +41,7 @@ inputs:
   arch:
     description: >
       arch
-    required: true
+    required: false
 
   version:
     description: >
@@ -117,7 +117,7 @@ runs:
         alias aws="docker run --rm  -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_DEFAULT_REGION -e AWS_BUCKET -e AWS_CONFIG_FILE paritytech/awscli"
         echo "Running image version: $(rs version)"
 
-        if [[ -z "$ARCH" ]]; then
+        if [[ ! -z "$ARCH" ]]; then
           upload_path="${PRODUCT}/${VERSION}/${ARCH}"
         else
           upload_path="${PRODUCT}/${VERSION}"
