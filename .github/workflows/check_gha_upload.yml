@@ -18,7 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        file: ["foo.txt", "bar.txt"]
+        file_name: ["foo.txt", "bar.txt"]
     # env:
 
     steps:
@@ -27,12 +27,12 @@ jobs:
         with:
           path: action
 
-      - name: Prepare test file ${{ matrix.file }}
+      - name: Prepare test file ${{ matrix.file_name }}
         run: |
-          echo "foobar" > ${{ matrix.file }}
+          echo "foobar" > ${{ matrix.file_name }}
           ls -al --color
 
-      - name: Upload file ${{ matrix.file }}
+      - name: Upload file ${{ matrix.file_name }}
         uses: ./action/release/artifacts/upload
         with:
           product: gha-artifacts-upload-tests
@@ -41,5 +41,5 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: eu-central-1
           AWS_BUCKET: test-parity-release-engineering
-          file: "${{ matrix.file }}"
+          file: "${{ matrix.file_name }}"
           overwrite: true

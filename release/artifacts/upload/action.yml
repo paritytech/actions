@@ -48,7 +48,7 @@ inputs:
       version
     required: true
 
-  file:
+  file_name:
     description: >
       input file
     required: true
@@ -100,14 +100,14 @@ runs:
         IMAGE: ${{ inputs.image }}
       run: |
         docker pull $IMAGE
-        docker images
+        # docker images
         docker run --rm paritytech/releng-scripts version
 
-    - name: Upload ${{ inputs.file }}
+    - name: Upload ${{ inputs.file_name }}
       id: upload
       env:
         IMAGE: ${{ inputs.image }}
-        FILE: ${{ inputs.file }}
+        FILE: ${{ inputs.file_name }}
         AWS_ACCESS_KEY_ID: ${{ inputs.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ inputs.AWS_SECRET_ACCESS_KEY }}
         AWS_REGION: ${{ inputs.AWS_REGION }}

@@ -29,3 +29,7 @@ doc_actions:
 md: generate_directory doc_actions
   #!/usr/bin/env bash
   asciidoctor -b docbook -a leveloffset=+1 -o - README_src.adoc | pandoc   --markdown-headings=atx --wrap=preserve -t markdown_strict -f docbook - > README.md
+
+# Push the changes to master to an alternate repo for testing
+push_test:
+  git push chevdor "$(git branch --show-current)":master -f
