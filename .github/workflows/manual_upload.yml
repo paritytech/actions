@@ -27,14 +27,12 @@ on:
         required: true
         default: foo.txt
 
-# Default to bash
 defaults:
   run:
     shell: bash
 
 jobs:
-  # Build job
-  build:
+  manual_upload:
     runs-on: ubuntu-latest
 
     steps:

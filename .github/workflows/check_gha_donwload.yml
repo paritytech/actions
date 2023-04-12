@@ -12,7 +12,7 @@ defaults:
     shell: bash
 
 jobs:
-  build:
+  download:
     runs-on: ubuntu-latest
 #     env:
 #       JUST_VERSION: 1.8.0 # https://github.com/casey/just/releases
