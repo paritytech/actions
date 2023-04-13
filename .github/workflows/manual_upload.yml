@@ -22,6 +22,21 @@ on:
         required: true
         default: test-parity-release-engineering
 
+      product:
+        description: The name of the product/project
+        required: true
+        default: product-12
+
+      version:
+        description: The version of your artifacts
+        required: true
+        default: 1.2.3
+
+      arch:
+        description: The arch
+        required: false
+        default: x86_64
+
 defaults:
   run:
     shell: bash
@@ -44,8 +59,9 @@ jobs:
       - name: Upload file
         uses: ./action/release/artifacts/upload
         with:
-          product: gha-artifacts-upload-tests
-          version: 1.2.3
+          product: ${{ github.event.inputs.propduct }}
+          version: ${{ github.event.inputs.version }}
+          arch: ${{ github.event.inputs.arch }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: ${{ github.event.inputs.region }}

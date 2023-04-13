@@ -19,9 +19,9 @@ doc_actions:
   #!/usr/bin/env bash
   echo "" > doc/actions.adoc
   for action in `find . -type f \( -iname "action.yml" ! -path "*example*" \)`; do
-    folder=$(dirname $action)
-    file=$(basename $action)
-    tera -t templates/action.adoc.tera $action > $folder/doc.adoc
+    folder=$(dirname "$action")
+    #file=$(basename "$action")
+    tera -t templates/action.adoc.tera "$action" > "$folder/doc.adoc"
     echo "include::../$folder/doc.adoc[]" >> doc/actions.adoc
   done
 
