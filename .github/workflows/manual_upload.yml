@@ -19,7 +19,7 @@ on:
       product:
         description: The name of the product/project
         required: true
-        default: product-12
+        default: product
 
       version:
         description: The version of your artifacts

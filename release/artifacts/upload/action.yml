@@ -121,6 +121,10 @@ runs:
 
         echo "Running rs image version: $(rs version)"
         echo "Running awscli image version: $(awscli aws --version)"
+
+        echo "product:   ${PRODUCT}"
+        echo "version:   ${VERSION}"
+        echo "arch:      ${ARCH}"
         echo "Overwrite: ${OVERWRITE}"
 
         [[ "$OVERWRITE" == "true" ]] && OVERWRITE_ARGS=" --overwrite " || OVERWRITE_ARGS=""
@@ -128,7 +132,6 @@ runs:
 
         echo "upload_path: $upload_path"
 
-        ls -al
         echo "Upload of $FILE"
         rs upload ${OVERWRITE_ARGS} \
           --bucket "${AWS_BUCKET}" \
