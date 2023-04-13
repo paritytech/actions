@@ -22,11 +22,6 @@ on:
         required: true
         default: test-parity-release-engineering
 
-      file_name:
-        description: The file will be generated but you can set its name
-        required: true
-        default: foo.txt
-
 defaults:
   run:
     shell: bash
@@ -41,12 +36,12 @@ jobs:
         with:
           path: action
 
-      - name: Prepare test file ${{ github.event.inputs.file_name }}
+      - name: Prepare test file
         run: |
-          echo "foobar" > ${{ github.event.inputs.file_name }}
+          echo "foobar" > foo.txt
           ls -al --color
 
-      - name: Upload file ${{ github.event.inputs.file_name }}
+      - name: Upload file
         uses: ./action/release/artifacts/upload
         with:
           product: gha-artifacts-upload-tests
@@ -55,5 +50,5 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: ${{ github.event.inputs.region }}
           AWS_BUCKET: ${{ github.event.inputs.bucket }}
-          file_name: ${{ github.event.inputs.file_name }}
+          file_name: foo.txt
           overwrite: ${{ github.event.inputs.overwrite }}

@@ -7,23 +7,19 @@ branding:
 
 inputs:
   AWS_ACCESS_KEY_ID:
-    description: >
-      The AWS Key to be used. Make sure it has the required access rights
+    description: The AWS Key to be used. Make sure it has the required access rights
     required: true
 
   AWS_SECRET_ACCESS_KEY:
-    description: >
-      The AWS secret key
+    description: The AWS secret key
     required: true
 
   AWS_BUCKET:
-    description: >
-      AWS Bucket
+    description: AWS Bucket
     required: true
 
   AWS_REGION:
-    description: >
-      The AWS region
+    description: The AWS region
     required: true
 
   public:
@@ -34,23 +30,23 @@ inputs:
     required: true
 
   product:
-    description: >
-      Project
+    description: Project
     required: true
 
   arch:
-    description: >
-      arch
+    description: arch
     required: false
 
   version:
-    description: >
-      version
+    description: version
     required: true
 
   file_name:
-    description: >
-      input file
+    description: input file
+    required: true
+
+  target_path:
+    description: Target path
     required: true
 
   labels:
@@ -98,10 +94,7 @@ runs:
       shell: bash
       env:
         IMAGE: ${{ inputs.image }}
-      run: |
-        docker pull $IMAGE
-        # docker images
-        docker run --rm paritytech/releng-scripts version
+      run: docker pull -q $IMAGE
 
     - name: Upload ${{ inputs.file_name }}
       id: upload
@@ -123,20 +116,14 @@ runs:
 
         alias rs="docker run --rm -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_REGION -e AWS_BUCKET -v $PWD:$VOL $IMAGE"
         alias awscli="docker run --rm  -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_REGION -e AWS_BUCKET -e AWS_CONFIG_FILE paritytech/awscli"
-        echo "Running image version: $(rs version)"
+
+        echo "Running rs image version: $(rs version)"
+        echo "Running awscli image version: $(awscli version)"
         echo "Overwrite: ${OVERWRITE}"
 
-        if [[ "$OVERWRITE" == "true" ]]; then
-          OVERWRITE_ARGS=" --overwrite "
-        else
-          OVERWRITE_ARGS=""
-        fi
+        [[ "$OVERWRITE" == "true" ]] && OVERWRITE_ARGS=" --overwrite " || OVERWRITE_ARGS=""
+        [[ ! -z "$ARCH" ]]; && upload_path="${PRODUCT}/${VERSION}/${ARCH}" || upload_path="${PRODUCT}/${VERSION}"
 
-        if [[ ! -z "$ARCH" ]]; then
-          upload_path="${PRODUCT}/${VERSION}/${ARCH}"
-        else
-          upload_path="${PRODUCT}/${VERSION}"
-        fi
         echo "upload_path: $upload_path"
 
         ls -al
