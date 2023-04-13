@@ -94,7 +94,9 @@ runs:
       shell: bash
       env:
         IMAGE: ${{ inputs.image }}
-      run: docker pull -q $IMAGE
+      run: |
+        docker pull -q $IMAGE
+        docker pull -q paritytech/awscli
 
     - name: Upload ${{ inputs.file_name }}
       id: upload
@@ -118,7 +120,7 @@ runs:
         alias awscli="docker run --rm  -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_REGION -e AWS_BUCKET -e AWS_CONFIG_FILE paritytech/awscli"
 
         echo "Running rs image version: $(rs version)"
-        echo "Running awscli image version: $(awscli version)"
+        echo "Running awscli image version: $(awscli aws --version)"
         echo "Overwrite: ${OVERWRITE}"
 
         [[ "$OVERWRITE" == "true" ]] && OVERWRITE_ARGS=" --overwrite " || OVERWRITE_ARGS=""
