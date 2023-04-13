@@ -11,7 +11,6 @@ on:
           - us-east-1
         default: eu-central-1
 
-
       bucket:
         description: Bucket to be used
         required: true
@@ -34,7 +33,7 @@ on:
 
       overwrite:
         type: boolean
-        description: Overwrite artifacts already present ?
+        description: Overwrite artifacts
         required: true
         default: false
 
