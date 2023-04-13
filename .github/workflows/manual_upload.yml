@@ -11,11 +11,6 @@ on:
           - us-east-1
         default: eu-central-1
 
-      overwrite:
-        type: boolean
-        description: Overwrite if artifacts are already present ?
-        required: true
-        default: false
 
       bucket:
         description: Bucket to be used
@@ -36,6 +31,12 @@ on:
         description: The arch
         required: false
         default: x86_64
+
+      overwrite:
+        type: boolean
+        description: Overwrite artifacts already present ?
+        required: true
+        default: false
 
 defaults:
   run:

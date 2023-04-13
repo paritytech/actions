@@ -124,7 +124,7 @@ runs:
         echo "Overwrite: ${OVERWRITE}"
 
         [[ "$OVERWRITE" == "true" ]] && OVERWRITE_ARGS=" --overwrite " || OVERWRITE_ARGS=""
-        [[ ! -z "$ARCH" ]]; && upload_path="${PRODUCT}/${VERSION}/${ARCH}" || upload_path="${PRODUCT}/${VERSION}"
+        [[ ! -z "$ARCH" ]] && upload_path="${PRODUCT}/${VERSION}/${ARCH}" || upload_path="${PRODUCT}/${VERSION}"
 
         echo "upload_path: $upload_path"
 
