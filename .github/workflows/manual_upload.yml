@@ -59,7 +59,7 @@ jobs:
       - name: Upload file
         uses: ./action/release/artifacts/upload
         with:
-          product: ${{ github.event.inputs.propduct }}
+          product: ${{ github.event.inputs.product }}
           version: ${{ github.event.inputs.version }}
           arch: ${{ github.event.inputs.arch }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
