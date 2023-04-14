@@ -62,17 +62,16 @@ inputs:
     default: "false"
 
   # Checksums
+
   # md5:
   #   description: >
   #     NOT IMPLEMENTED YET
   #     Should generate a md5 checksum ?
   #   default: "false"
 
-  # sha256:
-  #   description: >
-  #     NOT IMPLEMENTED YET
-  #     Should generate a sha256 checksum ?
-  #   default: "false"
+  sha256:
+    description: Generate a sha256 checksum
+    default: "false"
 
   image:
     description: >
@@ -111,6 +110,7 @@ runs:
         ARCH: ${{ inputs.arch }}
         VERSION: ${{ inputs.version }}
         OVERWRITE: ${{inputs.overwrite}}
+        SHA256: ${{inputs.sha256}}
       shell: bash
       run: |
         shopt -s expand_aliases
@@ -132,13 +132,26 @@ runs:
 
         echo "upload_path: $upload_path"
 
-        echo "Upload of $FILE"
+        echo "Uploading $FILE"
         rs upload ${OVERWRITE_ARGS} \
           --bucket "${AWS_BUCKET}" \
           custom \
           ${upload_path} \
           s3 \
           "$VOL/${FILE}"
+
+        if [[ "$SHA256" == "true" ]]; then
+          echo "Creating sha256 cheksum"
+          sha256sum "${FILE}" > "${FILE}.sha256"
+
+          echo "Uploading sha256 checksum"
+          rs upload ${OVERWRITE_ARGS} \
+            --bucket "${AWS_BUCKET}" \
+            custom \
+            ${upload_path} \
+            s3 \
+            "$VOL/${FILE}.sha256"
+        fi
 
         # TODO: we don't want to see ALL
         # echo "Check: https://${AWS_BUCKET}.s3.${AWS_DEFAULT_REGION}.amazonaws.com/index.html"

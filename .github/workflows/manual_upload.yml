@@ -37,6 +37,12 @@ on:
         required: true
         default: false
 
+      sha256:
+        type: boolean
+        description: Generate a sha256 checksum
+        required: true
+        default: false
+
 defaults:
   run:
     shell: bash
@@ -68,3 +74,4 @@ jobs:
           aws_bucket: ${{ github.event.inputs.bucket }}
           file_name: foo.txt
           overwrite: ${{ github.event.inputs.overwrite }}
+          sha256: ${{ github.event.inputs.sha256 }}
