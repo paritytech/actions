@@ -62,9 +62,9 @@ jobs:
           product: ${{ github.event.inputs.product }}
           version: ${{ github.event.inputs.version }}
           arch: ${{ github.event.inputs.arch }}
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_REGION: ${{ github.event.inputs.region }}
-          AWS_BUCKET: ${{ github.event.inputs.bucket }}
+          aws_access_key_id: ${{ secrets.aws_access_key_id }}
+          aws_secret_access_key: ${{ secrets.aws_secret_access_key }}
+          aws_region: ${{ github.event.inputs.region }}
+          aws_bucket: ${{ github.event.inputs.bucket }}
           file_name: foo.txt
           overwrite: ${{ github.event.inputs.overwrite }}
