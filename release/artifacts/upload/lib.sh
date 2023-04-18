@@ -1,13 +1,18 @@
 #!/usr/bin/env bash
 
 shopt -s expand_aliases
+echoerr() { echo "$@" 1>&2; }
 
 VOL=/data
 
-alias rs="docker run --rm -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_REGION -e AWS_BUCKET -v $PWD:$VOL $IMAGE"
+# Check if we have the required ENV
+for k in AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_REGION AWS_BUCKET; do
+    [[ -z ${!k} ]] && echoerr "Missing definition of $k"
+done
+
+alias rs="docker run --rm -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_REGION -e AWS_BUCKET -v \$PWD:$VOL $IMAGE"
 alias awscli="docker run --rm  -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_REGION -e AWS_BUCKET -e AWS_CONFIG_FILE paritytech/awscli"
 
-echoerr() { echo "$@" 1>&2; }
 
 # Check if the mode is one of the supported ones
 validate_mode() {
@@ -57,12 +62,13 @@ check_mode_inputs () {
 
 # Call ls on the S3 bucket to check for content
 check_s3 () {
+    DIR=${1:-"${PRODUCT}"}
     awscli aws s3 ls "${AWS_BUCKET}" --summarize
-    awscli aws s3 ls "${AWS_BUCKET}/${PRODUCT}" --human-readable --recursive
+    awscli aws s3 ls "${AWS_BUCKET}/${DIR}" --human-readable --recursive
 }
 
 show_versions () {
-    echo "Running rs image version: $(rs version)"
+    echo "Running rs image version: v$(rs version)"
     echo "Running awscli image version: $(awscli aws --version)"
 }
 
@@ -104,13 +110,19 @@ main() {
             fi
         ;;
 
+        gha)
+            echo "upload_dir: $GITHUB_REPOSITORY_OWNER/gh-workflow/$GITHUB_WORKFLOW/$GITHUB_RUN_ID"
+            echo "USING DRY MODE"
+            rs upload "${OVERWRITE_ARGS}" \
+                --dry \
+                --bucket "${AWS_BUCKET}" \
+                gha
+        ;;
+
         release)
             echoerr "release mode - NO IMPLEMENTED YET"
         ;;
 
-        gha)
-            echoerr "gha - NO IMPLEMENTED YET"
-        ;;
     esac
 
 

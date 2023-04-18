@@ -77,7 +77,7 @@ inputs:
       Docker image to be used. This is usually not something you want to change
       unless you know what you are doing
     required: true
-    default: "paritytech/releng-scripts"
+    default: "docker.io/paritytech/releng-scripts"
 
 outputs:
   url:
