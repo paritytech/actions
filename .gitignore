@@ -1,2 +1,5 @@
 .env*
 doc.adoc
+action.adoc
+!.env-sample
+TODO.adoc

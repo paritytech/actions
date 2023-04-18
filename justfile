@@ -15,14 +15,18 @@ _create_directory:
 generate_directory: _create_directory
 	tera -t templates/directory.adoc.tera directory.json > doc/directory.adoc
 
+# Find all the action.yml files and generate their action.adoc version
 doc_actions:
   #!/usr/bin/env bash
   echo "" > doc/actions.adoc
   for action in `find . -type f \( -iname "action.yml" ! -path "*example*" \)`; do
     folder=$(dirname "$action")
     #file=$(basename "$action")
-    tera -t templates/action.adoc.tera "$action" > "$folder/doc.adoc"
-    echo "include::../$folder/doc.adoc[]" >> doc/actions.adoc
+    tera -t templates/action.adoc.tera "$action" > "$folder/action.adoc"
+
+    # We use the users README if there is one, or fallback to the generated action.adoc
+    [[ -f "./$folder/README.adoc" ]] && HEAD="../$folder/README.adoc" || HEAD="../$folder/action.adoc"
+    echo "include::${HEAD}[]" >> doc/actions.adoc
   done
 
 # Generate the readme as .md

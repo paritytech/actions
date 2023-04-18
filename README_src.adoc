@@ -1,3 +1,5 @@
+:toc: right
+
 = Github Actions
 
 A collection of custom GitHub actions and examples.
@@ -5,3 +7,21 @@ A collection of custom GitHub actions and examples.
 include::doc/directory.adoc[]
 
 include::doc/actions.adoc[]
+
+== Dev notes
+
+Here are a few snippets to help testing with S3:
+You should have the creds in your env.
+
+```
+AWS_BUCKET=eu-central-1
+PRODUCT=product
+
+# Make sure to use a rootful image if you want to export files with cp or sync
+
+alias awscli="podman run --label=disable --rm  -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_REGION -e AWS_BUCKET -e AWS_CONFIG_FILE -v /tmp:/tmp paritytech/awscli"
+awscli aws s3 ls ${AWS_BUCKET}/${PRODUCT} --human-readable --recursive
+
+awscli aws s3 sync s3://${AWS_BUCKET}/${PRODUCT} /tmp
+
+```

@@ -16,20 +16,36 @@ on:
         required: true
         default: test-parity-release-engineering
 
+      mode:
+        description: Upload mode. WARNING Not all modes are supported yet.
+        type: choice
+        options:
+          - standard
+          - gha
+          - release
+
+      # MODE: Required in mode "standard"
       product:
         description: The name of the product/project
         required: true
         default: product
 
+      # MODE: Required in mode "standard"
       version:
         description: The version of your artifacts
         required: true
         default: 1.2.3
 
+      # MODE: Required in mode "standard"
       arch:
         description: The arch
         required: false
         default: x86_64
+
+      file_name:
+        description: The file is generated but you can rename it for testing
+        required: true
+        default: foo.txt
 
       overwrite:
         type: boolean
@@ -65,6 +81,7 @@ jobs:
       - name: Upload file
         uses: ./action/release/artifacts/upload
         with:
+          mode: ${{ github.event.inputs.mode }}
           product: ${{ github.event.inputs.product }}
           version: ${{ github.event.inputs.version }}
           arch: ${{ github.event.inputs.arch }}
@@ -72,6 +89,6 @@ jobs:
           aws_secret_access_key: ${{ secrets.aws_secret_access_key }}
           aws_region: ${{ github.event.inputs.region }}
           aws_bucket: ${{ github.event.inputs.bucket }}
-          file_name: foo.txt
+          file_name: ${{ github.event.inputs.file_name }}
           overwrite: ${{ github.event.inputs.overwrite }}
           sha256: ${{ github.event.inputs.sha256 }}

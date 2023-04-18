@@ -76,38 +76,38 @@
         "color": "green"
       },
       "inputs": {
-        "AWS_ACCESS_KEY_ID": {
+        "aws_access_key_id": {
           "description": "The AWS Key to be used. Make sure it has the required access rights",
           "required": true
         },
-        "AWS_SECRET_ACCESS_KEY": {
+        "aws_secret_access_key": {
           "description": "The AWS secret key",
           "required": true
         },
-        "AWS_BUCKET": {
+        "aws_bucket": {
           "description": "AWS Bucket",
           "required": true
         },
-        "AWS_REGION": {
+        "aws_region": {
           "description": "The AWS region",
           "required": true
         },
-        "public": {
-          "description": "NOT IMPLEMENTED YET Whether the artifacts should be uploaded as public or not. Please note that some backends do not allow private uploads.\n",
-          "default": "false",
-          "required": true
+        "mode": {
+          "description": "Upload mode. Can be only \"standard\" for now.",
+          "required": true,
+          "default": "standard"
         },
         "product": {
-          "description": "Project",
+          "description": "Product",
+          "required": true
+        },
+        "version": {
+          "description": "version",
           "required": true
         },
         "arch": {
           "description": "arch",
           "required": false
-        },
-        "version": {
-          "description": "version",
-          "required": true
         },
         "file_name": {
           "description": "input file",
@@ -117,21 +117,13 @@
           "description": "Target path",
           "required": true
         },
-        "labels": {
-          "description": "NOT IMPLEMENTED YET An array of labels\n",
-          "required": false
-        },
         "overwrite": {
           "description": "Allows overwriting if the file already exists\n",
           "required": false,
           "default": "false"
         },
-        "md5": {
-          "description": "NOT IMPLEMENTED YET Should generate a md5 checksum ?\n",
-          "default": "false"
-        },
         "sha256": {
-          "description": "NOT IMPLEMENTED YET Should generate a sha256 checksum ?\n",
+          "description": "Generate a sha256 checksum",
           "default": "false"
         },
         "image": {
@@ -155,25 +147,27 @@
             "env": {
               "IMAGE": "${{ inputs.image }}"
             },
-            "run": "docker pull $IMAGE\n# docker images\ndocker run --rm paritytech/releng-scripts version\n"
+            "run": "docker pull -q $IMAGE\ndocker pull -q paritytech/awscli\n"
           },
           {
             "name": "Upload ${{ inputs.file_name }}",
             "id": "upload",
             "env": {
               "IMAGE": "${{ inputs.image }}",
+              "MODE": "${{ inputs.mode }}",
               "FILE": "${{ inputs.file_name }}",
-              "AWS_ACCESS_KEY_ID": "${{ inputs.AWS_ACCESS_KEY_ID }}",
-              "AWS_SECRET_ACCESS_KEY": "${{ inputs.AWS_SECRET_ACCESS_KEY }}",
-              "AWS_REGION": "${{ inputs.AWS_REGION }}",
-              "AWS_BUCKET": "${{ inputs.AWS_BUCKET }}",
+              "AWS_ACCESS_KEY_ID": "${{ inputs.aws_access_key_id }}",
+              "AWS_SECRET_ACCESS_KEY": "${{ inputs.aws_secret_access_key }}",
+              "AWS_REGION": "${{ inputs.aws_region }}",
+              "AWS_BUCKET": "${{ inputs.aws_bucket }}",
               "PRODUCT": "${{ inputs.product }}",
               "ARCH": "${{ inputs.arch }}",
               "VERSION": "${{ inputs.version }}",
-              "OVERWRITE": "${{inputs.overwrite}}"
+              "OVERWRITE": "${{inputs.overwrite}}",
+              "SHA256": "${{inputs.sha256}}"
             },
             "shell": "bash",
-            "run": "shopt -s expand_aliases\nVOL=/data\n\nalias rs=\"docker run --rm -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_REGION -e AWS_BUCKET -v $PWD:$VOL $IMAGE\"\nalias awscli=\"docker run --rm  -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_REGION -e AWS_BUCKET -e AWS_CONFIG_FILE paritytech/awscli\"\necho \"Running image version: $(rs version)\"\necho \"Overwrite: ${OVERWRITE}\"\n\nif [[ \"$OVERWRITE\" == \"true\" ]]; then\n  OVERWRITE_ARGS=\" --overwrite \"\nelse\n  OVERWRITE_ARGS=\"\"\nfi\n\nif [[ ! -z \"$ARCH\" ]]; then\n  upload_path=\"${PRODUCT}/${VERSION}/${ARCH}\"\nelse\n  upload_path=\"${PRODUCT}/${VERSION}\"\nfi\necho \"upload_path: $upload_path\"\n\nls -al\necho \"Upload of $FILE\"\nrs upload ${OVERWRITE_ARGS} \\\n  --bucket \"${AWS_BUCKET}\" \\\n  custom \\\n  ${upload_path} \\\n  s3 \\\n  \"$VOL/${FILE}\"\n\n# TODO: we don't want to see ALL\necho \"Check: https://${AWS_BUCKET}.s3.${AWS_DEFAULT_REGION}.amazonaws.com/index.html\"\nawscli aws s3 ls ${AWS_BUCKET} --summarize\nawscli aws s3 ls ${AWS_BUCKET} --human-readable --recursive\n"
+            "run": "source ./lib.sh\necho \"MODE set to $MODE\"\ncheck_mode_inputs $MODE\n\nshopt -s expand_aliases\nVOL=/data\n\nalias rs=\"docker run --rm -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_REGION -e AWS_BUCKET -v $PWD:$VOL $IMAGE\"\nalias awscli=\"docker run --rm  -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_REGION -e AWS_BUCKET -e AWS_CONFIG_FILE paritytech/awscli\"\n\necho \"Running rs image version: $(rs version)\"\necho \"Running awscli image version: $(awscli aws --version)\"\n\necho \"product:   ${PRODUCT}\"\necho \"version:   ${VERSION}\"\necho \"arch:      ${ARCH}\"\necho \"Overwrite: ${OVERWRITE}\"\n\n[[ \"$OVERWRITE\" == \"true\" ]] && OVERWRITE_ARGS=\" --overwrite \" || OVERWRITE_ARGS=\"\"\n[[ ! -z \"$ARCH\" ]] && upload_path=\"${PRODUCT}/${VERSION}/${ARCH}\" || upload_path=\"${PRODUCT}/${VERSION}\"\n\necho \"upload_path: $upload_path\"\n\necho \"Uploading $FILE\"\nrs upload ${OVERWRITE_ARGS} \\\n  --bucket \"${AWS_BUCKET}\" \\\n  custom \\\n  ${upload_path} \\\n  s3 \\\n  \"$VOL/${FILE}\"\n\nif [[ \"$SHA256\" == \"true\" ]]; then\n  echo \"Creating sha256 cheksum\"\n  sha256sum \"${FILE}\" > \"${FILE}.sha256\"\n\n  echo \"Uploading sha256 checksum\"\n  rs upload ${OVERWRITE_ARGS} \\\n    --bucket \"${AWS_BUCKET}\" \\\n    custom \\\n    ${upload_path} \\\n    s3 \\\n    \"$VOL/${FILE}.sha256\"\nfi\n\n# TODO: we don't want to see ALL\n# echo \"Check: https://${AWS_BUCKET}.s3.${AWS_DEFAULT_REGION}.amazonaws.com/index.html\"\nawscli aws s3 ls ${AWS_BUCKET} --summarize\nawscli aws s3 ls ${AWS_BUCKET}/${PRODUCT} --human-readable --recursive\n"
           }
         ]
       }

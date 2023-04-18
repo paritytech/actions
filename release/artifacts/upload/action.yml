@@ -22,6 +22,7 @@ inputs:
     description: The AWS region
     required: true
 
+  # TODO
   # public:
   #   description: >
   #     NOT IMPLEMENTED YET
@@ -29,17 +30,22 @@ inputs:
   #   default: "false"
   #   required: true
 
+  mode:
+    description: Upload mode. Can be only "standard" for now.
+    required: true
+    default: standard
+
   product:
     description: Product
+    required: true
+
+  version:
+    description: version
     required: true
 
   arch:
     description: arch
     required: false
-
-  version:
-    description: version
-    required: true
 
   file_name:
     description: input file
@@ -49,6 +55,7 @@ inputs:
     description: Target path
     required: true
 
+  # TODO
   # labels:
   #   description: >
   #     NOT IMPLEMENTED YET
@@ -60,14 +67,6 @@ inputs:
       Allows overwriting if the file already exists
     required: false
     default: "false"
-
-  # Checksums
-
-  # md5:
-  #   description: >
-  #     NOT IMPLEMENTED YET
-  #     Should generate a md5 checksum ?
-  #   default: "false"
 
   sha256:
     description: Generate a sha256 checksum
@@ -101,6 +100,7 @@ runs:
       id: upload
       env:
         IMAGE: ${{ inputs.image }}
+        MODE: ${{ inputs.mode }}
         FILE: ${{ inputs.file_name }}
         AWS_ACCESS_KEY_ID: ${{ inputs.aws_access_key_id }}
         AWS_SECRET_ACCESS_KEY: ${{ inputs.aws_secret_access_key }}
@@ -113,6 +113,10 @@ runs:
         SHA256: ${{inputs.sha256}}
       shell: bash
       run: |
+        source ./lib.sh
+        echo "MODE set to $MODE"
+        check_mode_inputs $MODE
+
         shopt -s expand_aliases
         VOL=/data
 
