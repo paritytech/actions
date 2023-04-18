@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 
 shopt -s expand_aliases
+
 VOL=/data
+
 alias rs="docker run --rm -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_REGION -e AWS_BUCKET -v $PWD:$VOL $IMAGE"
 alias awscli="docker run --rm  -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_REGION -e AWS_BUCKET -e AWS_CONFIG_FILE paritytech/awscli"
 
@@ -55,10 +57,8 @@ check_mode_inputs () {
 
 # Call ls on the S3 bucket to check for content
 check_s3 () {
-    # TODO: we don't want to see ALL
-    # echo "Check: https://${AWS_BUCKET}.s3.${AWS_DEFAULT_REGION}.amazonaws.com/index.html"
-    awscli aws s3 ls ${AWS_BUCKET} --summarize
-    awscli aws s3 ls ${AWS_BUCKET}/${PRODUCT} --human-readable --recursive
+    awscli aws s3 ls "${AWS_BUCKET}" --summarize
+    awscli aws s3 ls "${AWS_BUCKET}/${PRODUCT}" --human-readable --recursive
 }
 
 show_versions () {
@@ -67,5 +67,52 @@ show_versions () {
 }
 
 main() {
-    echo "TODO"
+    echo "MAIN START"
+    echo "MODE: $MODE"
+
+    [[ "$OVERWRITE" == "true" ]] && OVERWRITE_ARGS=" --overwrite " || OVERWRITE_ARGS=""
+    case $MODE in
+        standard)
+            [[ ! -z "$ARCH" ]] && upload_path="${PRODUCT}/${TAG}/${ARCH}" || upload_path="${PRODUCT}/${TAG}"
+
+            echo "product:   ${PRODUCT}"
+            echo "tag:       ${TAG}"
+            echo "arch:      ${ARCH}"
+            echo "Overwrite: ${OVERWRITE}"
+
+            echo "upload_path: $upload_path"
+
+            echo "Uploading $FILE"
+            rs upload "${OVERWRITE_ARGS}" \
+                --bucket "${AWS_BUCKET}" \
+                custom \
+                "${upload_path}" \
+                s3 \
+                "$VOL/${FILE}"
+
+            if [[ "$SHA256" == "true" ]]; then
+            echo "Creating sha256 cheksum"
+            sha256sum "${FILE}" > "${FILE}.sha256"
+
+            echo "Uploading sha256 checksum"
+            rs upload "${OVERWRITE_ARGS}" \
+                --bucket "${AWS_BUCKET}" \
+                custom \
+                "${upload_path}" \
+                s3 \
+                "$VOL/${FILE}.sha256"
+            fi
+        ;;
+
+        release)
+            echoerr "release mode - NO IMPLEMENTED YET"
+        ;;
+
+        gha)
+            echoerr "gha - NO IMPLEMENTED YET"
+        ;;
+    esac
+
+
+    echo "MAIN END"
 }

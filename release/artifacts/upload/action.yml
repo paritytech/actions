@@ -119,37 +119,6 @@ runs:
 
         show_versions
 
-        echo "product:   ${PRODUCT}"
-        echo "tag:       ${TAG}"
-        echo "arch:      ${ARCH}"
-        echo "Overwrite: ${OVERWRITE}"
-
         main
-
-        [[ "$OVERWRITE" == "true" ]] && OVERWRITE_ARGS=" --overwrite " || OVERWRITE_ARGS=""
-        [[ ! -z "$ARCH" ]] && upload_path="${PRODUCT}/${TAG}/${ARCH}" || upload_path="${PRODUCT}/${TAG}"
-
-        echo "upload_path: $upload_path"
-
-        echo "Uploading $FILE"
-        rs upload ${OVERWRITE_ARGS} \
-          --bucket "${AWS_BUCKET}" \
-          custom \
-          ${upload_path} \
-          s3 \
-          "$VOL/${FILE}"
-
-        if [[ "$SHA256" == "true" ]]; then
-          echo "Creating sha256 cheksum"
-          sha256sum "${FILE}" > "${FILE}.sha256"
-
-          echo "Uploading sha256 checksum"
-          rs upload ${OVERWRITE_ARGS} \
-            --bucket "${AWS_BUCKET}" \
-            custom \
-            ${upload_path} \
-            s3 \
-            "$VOL/${FILE}.sha256"
-        fi
 
         check_s3
