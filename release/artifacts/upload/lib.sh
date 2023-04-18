@@ -17,6 +17,8 @@ validate_mode() {
     esac
 }
 
+# Check if the mode is valid and if we have all
+# the ENV required for it
 check_mode_inputs () {
     MODE=$1
     if [[ -z "$MODE" ]]; then
@@ -41,7 +43,8 @@ check_mode_inputs () {
         ;;
 
         *)
-        echoerr "unreachable"
+            echoerr "unreachable"
+            return 1
         ;;
     esac
 

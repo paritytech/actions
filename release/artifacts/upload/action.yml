@@ -113,12 +113,6 @@ runs:
         SHA256: ${{inputs.sha256}}
       shell: bash
       run: |
-        # debug
-        pwd
-        ls -al
-        ls -al ./action/release/artifacts/upload
-        cat ./action/release/artifacts/upload/lib.sh
-
         . ./action/release/artifacts/upload/lib.sh
         echo "MODE set to $MODE"
         check_mode_inputs $MODE
