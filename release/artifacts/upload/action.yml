@@ -117,19 +117,14 @@ runs:
         echo "MODE set to $MODE"
         check_mode_inputs $MODE
 
-        shopt -s expand_aliases
-        VOL=/data
-
-        alias rs="docker run --rm -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_REGION -e AWS_BUCKET -v $PWD:$VOL $IMAGE"
-        alias awscli="docker run --rm  -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_REGION -e AWS_BUCKET -e AWS_CONFIG_FILE paritytech/awscli"
-
-        echo "Running rs image version: $(rs version)"
-        echo "Running awscli image version: $(awscli aws --version)"
+        show_versions
 
         echo "product:   ${PRODUCT}"
         echo "tag:       ${TAG}"
         echo "arch:      ${ARCH}"
         echo "Overwrite: ${OVERWRITE}"
+
+        main
 
         [[ "$OVERWRITE" == "true" ]] && OVERWRITE_ARGS=" --overwrite " || OVERWRITE_ARGS=""
         [[ ! -z "$ARCH" ]] && upload_path="${PRODUCT}/${TAG}/${ARCH}" || upload_path="${PRODUCT}/${TAG}"
@@ -157,7 +152,4 @@ runs:
             "$VOL/${FILE}.sha256"
         fi
 
-        # TODO: we don't want to see ALL
-        # echo "Check: https://${AWS_BUCKET}.s3.${AWS_DEFAULT_REGION}.amazonaws.com/index.html"
-        awscli aws s3 ls ${AWS_BUCKET} --summarize
-        awscli aws s3 ls ${AWS_BUCKET}/${PRODUCT} --human-readable --recursive
+        check_s3
