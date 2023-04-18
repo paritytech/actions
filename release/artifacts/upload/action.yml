@@ -118,7 +118,7 @@ runs:
         ls -al
         ls -al ./action/release/artifacts/upload
 
-        source ./lib.sh
+        source ./release/artifacts/upload/lib.sh
         echo "MODE set to $MODE"
         check_mode_inputs $MODE
 
