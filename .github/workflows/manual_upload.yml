@@ -3,6 +3,16 @@ name: Manual Upload
 on:
   workflow_dispatch:
     inputs:
+      mode:
+        description: Upload mode. WARNING Not all modes are supported yet.
+        type: choice
+        options:
+          - standard
+          - gha
+          - release
+        default: standard
+        required: true
+
       region:
         type: choice
         description: The region to be used
@@ -16,13 +26,6 @@ on:
         required: true
         default: test-parity-release-engineering
 
-      mode:
-        description: Upload mode. WARNING Not all modes are supported yet.
-        type: choice
-        options:
-          - standard
-          - gha
-          - release
 
       # MODE: Required in mode "standard"
       product:
