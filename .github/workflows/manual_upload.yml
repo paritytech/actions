@@ -34,10 +34,10 @@ on:
         default: product
 
       # MODE: Required in mode "standard"
-      version:
+      tag:
         description: The version of your artifacts
         required: true
-        default: 1.2.3
+        default: v1.2.3
 
       # MODE: Required in mode "standard"
       arch:
@@ -86,7 +86,7 @@ jobs:
         with:
           mode: ${{ github.event.inputs.mode }}
           product: ${{ github.event.inputs.product }}
-          version: ${{ github.event.inputs.version }}
+          tag: ${{ github.event.inputs.tag }}
           arch: ${{ github.event.inputs.arch }}
           aws_access_key_id: ${{ secrets.aws_access_key_id }}
           aws_secret_access_key: ${{ secrets.aws_secret_access_key }}

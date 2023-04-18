@@ -39,8 +39,8 @@ inputs:
     description: Product
     required: true
 
-  version:
-    description: version
+  tag:
+    description: tag
     required: true
 
   arch:
@@ -108,7 +108,7 @@ runs:
         AWS_BUCKET: ${{ inputs.aws_bucket }}
         PRODUCT: ${{ inputs.product }}
         ARCH: ${{ inputs.arch }}
-        VERSION: ${{ inputs.version }}
+        TAG: ${{ inputs.tag }}
         OVERWRITE: ${{inputs.overwrite}}
         SHA256: ${{inputs.sha256}}
       shell: bash
@@ -117,8 +117,9 @@ runs:
         pwd
         ls -al
         ls -al ./action/release/artifacts/upload
+        cat ./action/release/artifacts/upload/lib.sh
 
-        source ./release/artifacts/upload/lib.sh
+        . ./action/release/artifacts/upload/lib.sh
         echo "MODE set to $MODE"
         check_mode_inputs $MODE
 
@@ -132,12 +133,12 @@ runs:
         echo "Running awscli image version: $(awscli aws --version)"
 
         echo "product:   ${PRODUCT}"
-        echo "version:   ${VERSION}"
+        echo "tag:       ${TAG}"
         echo "arch:      ${ARCH}"
         echo "Overwrite: ${OVERWRITE}"
 
         [[ "$OVERWRITE" == "true" ]] && OVERWRITE_ARGS=" --overwrite " || OVERWRITE_ARGS=""
-        [[ ! -z "$ARCH" ]] && upload_path="${PRODUCT}/${VERSION}/${ARCH}" || upload_path="${PRODUCT}/${VERSION}"
+        [[ ! -z "$ARCH" ]] && upload_path="${PRODUCT}/${TAG}/${ARCH}" || upload_path="${PRODUCT}/${TAG}"
 
         echo "upload_path: $upload_path"
 
