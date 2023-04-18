@@ -50,6 +50,13 @@ check_mode_inputs () {
             return 0
         ;;
 
+        gha)
+            [[ -z $GITHUB_REPOSITORY_OWNER ]] && { echoerr "Missing ENV: GITHUB_REPOSITORY_OWNER"; return 1; }
+            [[ -z $GITHUB_WORKFLOW ]] && { echoerr "Missing ENV: GITHUB_WORKFLOW"; return 1; }
+            [[ -z $GITHUB_RUN_ID ]] && { echoerr "Missing ENV: GITHUB_RUN_ID"; return 1; }
+            return 0
+        ;;
+
         *)
             echoerr "unreachable case"
             return 1
