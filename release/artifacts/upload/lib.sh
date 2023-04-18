@@ -76,7 +76,7 @@ main() {
     echo "MAIN START"
     echo "MODE: $MODE"
 
-    [[ "$OVERWRITE" == "true" ]] && OVERWRITE_ARGS=" --overwrite " || OVERWRITE_ARGS=""
+    [[ "$OVERWRITE" == "true" ]] && OVERWRITE_ARGS="--overwrite" || OVERWRITE_ARGS=""
     case $MODE in
         standard)
             [[ ! -z "$ARCH" ]] && upload_path="${PRODUCT}/${TAG}/${ARCH}" || upload_path="${PRODUCT}/${TAG}"
@@ -89,7 +89,7 @@ main() {
             echo "upload_path: $upload_path"
 
             echo "Uploading $FILE"
-            rs upload "${OVERWRITE_ARGS}" \
+            rs upload ${OVERWRITE_ARGS} \
                 --bucket "${AWS_BUCKET}" \
                 custom \
                 "${upload_path}" \
@@ -101,7 +101,7 @@ main() {
             sha256sum "${FILE}" > "${FILE}.sha256"
 
             echo "Uploading sha256 checksum"
-            rs upload "${OVERWRITE_ARGS}" \
+            rs upload ${OVERWRITE_ARGS} \
                 --bucket "${AWS_BUCKET}" \
                 custom \
                 "${upload_path}" \
