@@ -79,6 +79,52 @@ show_versions () {
     echo "Running awscli image version: $(awscli aws --version)"
 }
 
+do_standard_upload() {
+    [[ ! -z "$ARCH" ]] && upload_path="${PRODUCT}/${TAG}/${ARCH}" || upload_path="${PRODUCT}/${TAG}"
+
+    echo "product:   ${PRODUCT}"
+    echo "tag:       ${TAG}"
+    echo "arch:      ${ARCH}"
+    echo "Overwrite: ${OVERWRITE}"
+
+    echo "upload_path: $upload_path"
+
+    echo "Uploading $FILE"
+    rs upload ${OVERWRITE_ARGS} \
+        --bucket "${AWS_BUCKET}" \
+        custom \
+        "${upload_path}" \
+        s3 \
+        "$VOL/${FILE}"
+
+    if [[ "$SHA256" == "true" ]]; then
+    echo "Creating sha256 cheksum"
+    sha256sum "${FILE}" > "${FILE}.sha256"
+
+    echo "Uploading sha256 checksum"
+    rs upload ${OVERWRITE_ARGS} \
+        --bucket "${AWS_BUCKET}" \
+        custom \
+        "${upload_path}" \
+        s3 \
+        "$VOL/${FILE}.sha256"
+    fi
+}
+
+do_gha_upload() {
+    echo "upload_dir: $GITHUB_REPOSITORY_OWNER/gh-workflow/$GITHUB_WORKFLOW/$GITHUB_RUN_ID"
+    echo "USING DRY MODE"
+    rs upload "${OVERWRITE_ARGS}" \
+        --dry \
+        --bucket "${AWS_BUCKET}" \
+        gha
+}
+
+do_release_upload() {
+    echoerr "release mode - NO IMPLEMENTED YET"
+    return 1
+}
+
 main() {
     echo "MAIN START"
     echo "MODE: $MODE"
@@ -86,52 +132,18 @@ main() {
     [[ "$OVERWRITE" == "true" ]] && OVERWRITE_ARGS="--overwrite" || OVERWRITE_ARGS=""
     case $MODE in
         standard)
-            [[ ! -z "$ARCH" ]] && upload_path="${PRODUCT}/${TAG}/${ARCH}" || upload_path="${PRODUCT}/${TAG}"
-
-            echo "product:   ${PRODUCT}"
-            echo "tag:       ${TAG}"
-            echo "arch:      ${ARCH}"
-            echo "Overwrite: ${OVERWRITE}"
-
-            echo "upload_path: $upload_path"
-
-            echo "Uploading $FILE"
-            rs upload ${OVERWRITE_ARGS} \
-                --bucket "${AWS_BUCKET}" \
-                custom \
-                "${upload_path}" \
-                s3 \
-                "$VOL/${FILE}"
-
-            if [[ "$SHA256" == "true" ]]; then
-            echo "Creating sha256 cheksum"
-            sha256sum "${FILE}" > "${FILE}.sha256"
-
-            echo "Uploading sha256 checksum"
-            rs upload ${OVERWRITE_ARGS} \
-                --bucket "${AWS_BUCKET}" \
-                custom \
-                "${upload_path}" \
-                s3 \
-                "$VOL/${FILE}.sha256"
-            fi
+            do_standard_upload
         ;;
 
         gha)
-            echo "upload_dir: $GITHUB_REPOSITORY_OWNER/gh-workflow/$GITHUB_WORKFLOW/$GITHUB_RUN_ID"
-            echo "USING DRY MODE"
-            rs upload "${OVERWRITE_ARGS}" \
-                --dry \
-                --bucket "${AWS_BUCKET}" \
-                gha
+            do_gha_upload
         ;;
 
         release)
-            echoerr "release mode - NO IMPLEMENTED YET"
+            do_release_upload
         ;;
 
     esac
-
 
     echo "MAIN END"
 }

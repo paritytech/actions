@@ -68,6 +68,7 @@ defaults:
 
 jobs:
   manual_upload:
+    name: Manual upload - mode=${{ github.event.inputs.mode }}
     runs-on: ubuntu-latest
 
     steps:
