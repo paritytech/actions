@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+set -u
+# set -e
+# set -o pipefail
+
 shopt -s expand_aliases
 echoerr() { echo "$@" 1>&2; }
 
@@ -10,22 +14,35 @@ for k in AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_REGION AWS_BUCKET; do
     [[ -z ${!k} ]] && echoerr "Missing definition of $k"
 done
 
-alias rs="docker run --rm -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_REGION -e AWS_BUCKET -v \$PWD:$VOL $IMAGE"
-alias awscli="docker run --rm  -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_REGION -e AWS_BUCKET -e AWS_CONFIG_FILE paritytech/awscli"
+alias rs="docker run --rm \
+    -e AWS_ACCESS_KEY_ID \
+    -e AWS_SECRET_ACCESS_KEY \
+    -e AWS_REGION \
+    -e AWS_BUCKET \
+    -e GITHUB_REPOSITORY_OWNER \
+    -e GITHUB_WORKFLOW \
+    -e GITHUB_RUN_ID \
+    -v \$PWD:$VOL \
+    $IMAGE"
 
+alias awscli="docker run --rm \
+    -e AWS_ACCESS_KEY_ID \
+    -e AWS_SECRET_ACCESS_KEY \
+    -e AWS_REGION \
+    -e AWS_BUCKET \
+    -e AWS_CONFIG_FILE \
+    paritytech/awscli"
 
 # Check if the mode is one of the supported ones
 validate_mode() {
     case $1 in
-        standard|gha)
-        # release)
-        return 0
+        standard|gha|release)
+            return 0
         ;;
 
         *)
-        return 1
+            return 1
         ;;
-
     esac
     return 1
 }
@@ -79,7 +96,7 @@ show_versions () {
     echo "Running awscli image version: $(awscli aws --version)"
 }
 
-do_standard_upload() {
+do_standard_upload () {
     [[ ! -z "$ARCH" ]] && upload_path="${PRODUCT}/${TAG}/${ARCH}" || upload_path="${PRODUCT}/${TAG}"
 
     echo "product:   ${PRODUCT}"
@@ -111,21 +128,23 @@ do_standard_upload() {
     fi
 }
 
-do_gha_upload() {
+do_gha_upload () {
     echo "upload_dir: $GITHUB_REPOSITORY_OWNER/gh-workflow/$GITHUB_WORKFLOW/$GITHUB_RUN_ID"
+
     echo "USING DRY MODE"
-    rs upload "${OVERWRITE_ARGS}" \
+
+    rs upload ${OVERWRITE_ARGS} \
         --dry \
         --bucket "${AWS_BUCKET}" \
         gha
 }
 
-do_release_upload() {
+do_release_upload () {
     echoerr "release mode - NO IMPLEMENTED YET"
     return 1
 }
 
-main() {
+main () {
     echo "MAIN START"
     echo "MODE: $MODE"
 
