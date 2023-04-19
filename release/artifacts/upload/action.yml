@@ -52,7 +52,7 @@ inputs:
     description: input file
     required: true
 
-  path:
+  files:
     description: Description of WHAT to upload
     required:  true
 
@@ -111,7 +111,7 @@ runs:
         IMAGE: ${{ inputs.image }}
         MODE: ${{ inputs.mode }}
         FILE: ${{ inputs.file_name }}
-        PATH: ${{ inputs.path }}
+        FILES: ${{ inputs.files }}
         AWS_ACCESS_KEY_ID: ${{ inputs.aws_access_key_id }}
         AWS_SECRET_ACCESS_KEY: ${{ inputs.aws_secret_access_key }}
         AWS_REGION: ${{ inputs.aws_region }}
