@@ -21,6 +21,7 @@ inputs:
   aws_region:
     description: The AWS region
     required: true
+    default: eu-central-1
 
   # TODO
   # public:
