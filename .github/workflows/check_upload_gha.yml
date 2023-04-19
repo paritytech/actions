@@ -37,3 +37,5 @@ jobs:
           aws_secret_access_key: ${{ secrets.aws_secret_access_key }}
           aws_bucket: test-parity-release-engineering
           file_name: "${{ matrix.file_name }}"
+          # You need the following if you want to be able to re-run your workflows
+          overwrite: true

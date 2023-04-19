@@ -134,10 +134,6 @@ do_standard_upload () {
 }
 
 do_gha_upload () {
-    echo "upload_dir: $GITHUB_REPOSITORY_OWNER/gh-workflow/$GITHUB_WORKFLOW/$GITHUB_RUN_ID"
-
-    cmd="rs upload ${OVERWRITE_ARGS} --bucket \"${AWS_BUCKET}\" gha s3 \"$VOL/${FILE}\""
-    echo $cmd
     rs upload ${OVERWRITE_ARGS} --bucket "${AWS_BUCKET}" gha s3 "$VOL/${FILE}"
 }
 
