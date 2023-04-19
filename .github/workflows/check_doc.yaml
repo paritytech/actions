@@ -14,7 +14,7 @@ defaults:
 
 jobs:
   # Build job
-  build:
+  build_doc:
     runs-on: ubuntu-latest
     env:
       JUST_VERSION: 1.8.0 # https://github.com/casey/just/releases

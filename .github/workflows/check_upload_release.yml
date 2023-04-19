@@ -1,9 +1,11 @@
-name: Check GHA Upload
+name: Upload Release
 
 on:
-  workflow_dispatch:
+  push:
+    branches:
+      - master
+  pull_request:
 
-# Default to bash
 defaults:
   run:
     shell: bash
@@ -14,7 +16,6 @@ jobs:
     strategy:
       matrix:
         file_name: ["foo.txt", "bar.txt"]
-    # env:
 
     steps:
       - name: Fetch GHA
@@ -27,14 +28,13 @@ jobs:
           echo "foobar" > ${{ matrix.file_name }}
           ls -al --color
 
-      - name: Upload file ${{ matrix.file_name }}
+      - name: Upload GHA - file ${{ matrix.file_name }}
         uses: ./action/release/artifacts/upload
         with:
-          product: gha-artifacts-upload-tests
-          tag: 1.2.3
+          mode: release
           aws_access_key_id: ${{ secrets.aws_access_key_id }}
           aws_secret_access_key: ${{ secrets.aws_secret_access_key }}
-          aws_region: eu-central-1
           aws_bucket: test-parity-release-engineering
           file_name: "${{ matrix.file_name }}"
+          # You need the following if you want to be able to re-run your workflows
           overwrite: true

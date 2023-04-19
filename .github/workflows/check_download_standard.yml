@@ -1,4 +1,4 @@
-name: Check GHA Download
+name: Check Download Standard
 
 on:
   push:

@@ -146,6 +146,8 @@ main () {
     echo "MAIN START"
     echo "MODE: $MODE"
 
+    echo "PATH: $PATH"
+
     [[ "$OVERWRITE" == "true" ]] && OVERWRITE_ARGS="--overwrite" || OVERWRITE_ARGS=""
     [[ "$DRY" == "true" ]] && DRY_ARGS="--dry" || DRY_ARGS=""
     case $MODE in
