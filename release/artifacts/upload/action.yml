@@ -64,8 +64,12 @@ inputs:
   #   required: false
 
   overwrite:
-    description: >
-      Allows overwriting if the file already exists
+    description: Allows overwriting if the file already exists
+    required: false
+    default: "false"
+
+  dry:
+    description: Will NOT upload the files
     required: false
     default: "false"
 
@@ -111,8 +115,8 @@ runs:
         ARCH: ${{ inputs.arch }}
         TAG: ${{ inputs.tag }}
         OVERWRITE: ${{inputs.overwrite}}
+        DRY: ${{inputs.dry}}
         SHA256: ${{inputs.sha256}}
-
 
       shell: bash
       run: |

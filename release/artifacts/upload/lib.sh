@@ -112,7 +112,7 @@ do_standard_upload () {
     echo "upload_path: $upload_path"
 
     echo "Uploading $FILE"
-    rs upload ${OVERWRITE_ARGS} \
+    rs upload ${OVERWRITE_ARGS} ${DRY_ARGS} \
         --bucket "${AWS_BUCKET}" \
         custom \
         "${upload_path}" \
@@ -124,7 +124,7 @@ do_standard_upload () {
     sha256sum "${FILE}" > "${FILE}.sha256"
 
     echo "Uploading sha256 checksum"
-    rs upload ${OVERWRITE_ARGS} \
+    rs upload ${OVERWRITE_ARGS} ${DRY_ARGS} \
         --bucket "${AWS_BUCKET}" \
         custom \
         "${upload_path}" \
@@ -134,7 +134,7 @@ do_standard_upload () {
 }
 
 do_gha_upload () {
-    rs upload ${OVERWRITE_ARGS} --bucket "${AWS_BUCKET}" gha s3 "$VOL/${FILE}"
+    rs upload ${OVERWRITE_ARGS} ${DRY_ARGS} --bucket "${AWS_BUCKET}" gha s3 "$VOL/${FILE}"
 }
 
 do_release_upload () {
@@ -147,6 +147,7 @@ main () {
     echo "MODE: $MODE"
 
     [[ "$OVERWRITE" == "true" ]] && OVERWRITE_ARGS="--overwrite" || OVERWRITE_ARGS=""
+    [[ "$DRY" == "true" ]] && DRY_ARGS="--dry" || DRY_ARGS=""
     case $MODE in
         standard)
             do_standard_upload
