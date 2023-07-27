@@ -25,3 +25,10 @@ awscli aws s3 ls ${AWS_BUCKET}/${PRODUCT} --human-readable --recursive
 awscli aws s3 sync s3://${AWS_BUCKET}/${PRODUCT} /tmp
 
 ```
+
+=== Subtree
+
+To add an external action:
+```
+git subtree add --prefix release/walking-tag-action https://github.com/s3krit/walking-tag-action master --squash
+````

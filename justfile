@@ -37,3 +37,7 @@ md: generate_directory doc_actions
 # Push the changes to master to an alternate repo for testing
 push_test:
   git push chevdor "$(git branch --show-current)":master -f
+
+# List external repos handled as subtree
+list_subtrees:
+  @git log | grep git-subtree-dir | tr -d ' ' | cut -d ":" -f2 | sort | uniq
