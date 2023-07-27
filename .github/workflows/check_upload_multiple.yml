@@ -47,7 +47,7 @@ jobs:
           aws_access_key_id: ${{ secrets.aws_access_key_id }}
           aws_secret_access_key: ${{ secrets.aws_secret_access_key }}
           aws_bucket: test-parity-release-engineering
-          path: "*.txt"
+          files: "*.txt"
           # You need the following if you want to be able to re-run your workflows
           overwrite: true
 
@@ -60,7 +60,7 @@ jobs:
           aws_access_key_id: ${{ secrets.aws_access_key_id }}
           aws_secret_access_key: ${{ secrets.aws_secret_access_key }}
           aws_bucket: test-parity-release-engineering
-          path: |
+          files: |
             *.txt
             !foo.txt
           # You need the following if you want to be able to re-run your workflows

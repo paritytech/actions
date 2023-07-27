@@ -142,6 +142,17 @@ do_release_upload () {
     return 1
 }
 
+# This function takes a list of 1..n strings
+# Those strings can be:
+# - a full file path
+# - a folder
+# - a pattern
+# - a negation
+# The function returns the matching actual list of files.
+get_files () {
+
+}
+
 main () {
     echo "MAIN START"
     echo "MODE: $MODE"
