@@ -90,7 +90,8 @@
         },
         "aws_region": {
           "description": "The AWS region",
-          "required": true
+          "required": true,
+          "default": "eu-central-1"
         },
         "mode": {
           "description": "Upload mode. Can be only \"standard\" for now.",
@@ -101,8 +102,8 @@
           "description": "Product",
           "required": true
         },
-        "version": {
-          "description": "version",
+        "tag": {
+          "description": "tag",
           "required": true
         },
         "arch": {
@@ -113,12 +114,21 @@
           "description": "input file",
           "required": true
         },
+        "files": {
+          "description": "Description of WHAT to upload",
+          "required": true
+        },
         "target_path": {
           "description": "Target path",
           "required": true
         },
         "overwrite": {
-          "description": "Allows overwriting if the file already exists\n",
+          "description": "Allows overwriting if the file already exists",
+          "required": false,
+          "default": "false"
+        },
+        "dry": {
+          "description": "Will NOT upload the files",
           "required": false,
           "default": "false"
         },
@@ -129,7 +139,7 @@
         "image": {
           "description": "Docker image to be used. This is usually not something you want to change unless you know what you are doing\n",
           "required": true,
-          "default": "paritytech/releng-scripts"
+          "default": "docker.io/paritytech/releng-scripts"
         }
       },
       "outputs": {
@@ -156,18 +166,20 @@
               "IMAGE": "${{ inputs.image }}",
               "MODE": "${{ inputs.mode }}",
               "FILE": "${{ inputs.file_name }}",
+              "FILES": "${{ inputs.files }}",
               "AWS_ACCESS_KEY_ID": "${{ inputs.aws_access_key_id }}",
               "AWS_SECRET_ACCESS_KEY": "${{ inputs.aws_secret_access_key }}",
               "AWS_REGION": "${{ inputs.aws_region }}",
               "AWS_BUCKET": "${{ inputs.aws_bucket }}",
               "PRODUCT": "${{ inputs.product }}",
               "ARCH": "${{ inputs.arch }}",
-              "VERSION": "${{ inputs.version }}",
+              "TAG": "${{ inputs.tag }}",
               "OVERWRITE": "${{inputs.overwrite}}",
+              "DRY": "${{inputs.dry}}",
               "SHA256": "${{inputs.sha256}}"
             },
             "shell": "bash",
-            "run": "source ./lib.sh\necho \"MODE set to $MODE\"\ncheck_mode_inputs $MODE\n\nshopt -s expand_aliases\nVOL=/data\n\nalias rs=\"docker run --rm -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_REGION -e AWS_BUCKET -v $PWD:$VOL $IMAGE\"\nalias awscli=\"docker run --rm  -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_REGION -e AWS_BUCKET -e AWS_CONFIG_FILE paritytech/awscli\"\n\necho \"Running rs image version: $(rs version)\"\necho \"Running awscli image version: $(awscli aws --version)\"\n\necho \"product:   ${PRODUCT}\"\necho \"version:   ${VERSION}\"\necho \"arch:      ${ARCH}\"\necho \"Overwrite: ${OVERWRITE}\"\n\n[[ \"$OVERWRITE\" == \"true\" ]] && OVERWRITE_ARGS=\" --overwrite \" || OVERWRITE_ARGS=\"\"\n[[ ! -z \"$ARCH\" ]] && upload_path=\"${PRODUCT}/${VERSION}/${ARCH}\" || upload_path=\"${PRODUCT}/${VERSION}\"\n\necho \"upload_path: $upload_path\"\n\necho \"Uploading $FILE\"\nrs upload ${OVERWRITE_ARGS} \\\n  --bucket \"${AWS_BUCKET}\" \\\n  custom \\\n  ${upload_path} \\\n  s3 \\\n  \"$VOL/${FILE}\"\n\nif [[ \"$SHA256\" == \"true\" ]]; then\n  echo \"Creating sha256 cheksum\"\n  sha256sum \"${FILE}\" > \"${FILE}.sha256\"\n\n  echo \"Uploading sha256 checksum\"\n  rs upload ${OVERWRITE_ARGS} \\\n    --bucket \"${AWS_BUCKET}\" \\\n    custom \\\n    ${upload_path} \\\n    s3 \\\n    \"$VOL/${FILE}.sha256\"\nfi\n\n# TODO: we don't want to see ALL\n# echo \"Check: https://${AWS_BUCKET}.s3.${AWS_DEFAULT_REGION}.amazonaws.com/index.html\"\nawscli aws s3 ls ${AWS_BUCKET} --summarize\nawscli aws s3 ls ${AWS_BUCKET}/${PRODUCT} --human-readable --recursive\n"
+            "run": ". ./action/release/artifacts/upload/lib.sh\necho \"MODE set to $MODE\"\ncheck_mode_inputs $MODE\n\nshow_versions\n\nmain\n\ncheck_s3\n"
           }
         ]
       }

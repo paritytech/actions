@@ -86,7 +86,11 @@ Upload artifacts
 
 -   `aws_secret_access_key`: The AWS secret key
 
+-   `[dry]`: Will NOT upload the files
+
 -   `file_name`: input file
+
+-   `files`: Description of WHAT to upload
 
 -   `image`: Docker image to be used. This is usually not something you want to change unless you know what you are doing
 
@@ -98,9 +102,9 @@ Upload artifacts
 
 -   `[sha256]`: Generate a sha256 checksum
 
--   `target_path`: Target path
+-   `tag`: tag
 
--   `version`: version
+-   `target_path`: Target path
 
 ### Outputs
 
@@ -120,3 +124,9 @@ You should have the creds in your env.
     awscli aws s3 ls ${AWS_BUCKET}/${PRODUCT} --human-readable --recursive
 
     awscli aws s3 sync s3://${AWS_BUCKET}/${PRODUCT} /tmp
+
+### Subtree
+
+To add an external action:
+
+    git subtree add --prefix release/walking-tag-action https://github.com/s3krit/walking-tag-action master --squash
