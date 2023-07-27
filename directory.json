@@ -1,0 +1,211 @@
+{
+  "directory": [
+    {
+      "name": "matrix-message",
+      "description": "Send a message to a matrix channel",
+      "author": "Martin Pugh (pugh@s3kr.it)",
+      "inputs": {
+        "server": {
+          "description": "Matrix server hostname",
+          "default": "matrix.org",
+          "required": false
+        },
+        "room_id": {
+          "description": "Matrix room ID, specified in channels advanced settings",
+          "default": "",
+          "required": true
+        },
+        "access_token": {
+          "description": "Access token required to send to matrix server",
+          "default": "",
+          "required": true
+        },
+        "message": {
+          "description": "Message to send in plaintext format",
+          "default": "",
+          "required": true
+        }
+      },
+      "runs": {
+        "using": "docker",
+        "image": "Dockerfile"
+      },
+      "branding": {
+        "icon": "message-square",
+        "color": "gray-dark"
+      }
+    },
+    {
+      "name": "Download",
+      "description": "Download artifacts",
+      "author": "Wilfried Kopp <chevdor@gmail.com>",
+      "branding": {
+        "icon": "package",
+        "color": "blue"
+      },
+      "inputs": {
+        "chain": {
+          "description": "Name of the chain, ie. polkadot\n",
+          "required": true
+        }
+      },
+      "outputs": {
+        "json": {
+          "description": "Foobar\n",
+          "value": "${{ steps.build.outputs.json }}"
+        }
+      },
+      "runs": {
+        "using": "composite",
+        "steps": [
+          {
+            "id": "foo",
+            "name": "Foo",
+            "shell": "bash",
+            "run": "echo FOO\n"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Upload",
+      "description": "Upload artifacts",
+      "author": "Wilfried Kopp <chevdor@gmail.com>",
+      "branding": {
+        "icon": "package",
+        "color": "green"
+      },
+      "inputs": {
+        "aws_access_key_id": {
+          "description": "The AWS Key to be used. Make sure it has the required access rights",
+          "required": true
+        },
+        "aws_secret_access_key": {
+          "description": "The AWS secret key",
+          "required": true
+        },
+        "aws_bucket": {
+          "description": "AWS Bucket",
+          "required": true
+        },
+        "aws_region": {
+          "description": "The AWS region",
+          "required": true,
+          "default": "eu-central-1"
+        },
+        "mode": {
+          "description": "Upload mode. Can be only \"standard\" for now.",
+          "required": true,
+          "default": "standard"
+        },
+        "product": {
+          "description": "Product",
+          "required": true
+        },
+        "tag": {
+          "description": "tag",
+          "required": true
+        },
+        "arch": {
+          "description": "arch",
+          "required": false
+        },
+        "file_name": {
+          "description": "input file",
+          "required": true
+        },
+        "files": {
+          "description": "Description of WHAT to upload",
+          "required": true
+        },
+        "target_path": {
+          "description": "Target path",
+          "required": true
+        },
+        "overwrite": {
+          "description": "Allows overwriting if the file already exists",
+          "required": false,
+          "default": "false"
+        },
+        "dry": {
+          "description": "Will NOT upload the files",
+          "required": false,
+          "default": "false"
+        },
+        "sha256": {
+          "description": "Generate a sha256 checksum",
+          "default": "false"
+        },
+        "image": {
+          "description": "Docker image to be used. This is usually not something you want to change unless you know what you are doing\n",
+          "required": true,
+          "default": "docker.io/paritytech/releng-scripts"
+        }
+      },
+      "outputs": {
+        "url": {
+          "description": "URL of the uploaded artifact\n",
+          "value": "${{ steps.upload.outputs.json }}"
+        }
+      },
+      "runs": {
+        "using": "composite",
+        "steps": [
+          {
+            "name": "Fetch Docker image",
+            "shell": "bash",
+            "env": {
+              "IMAGE": "${{ inputs.image }}"
+            },
+            "run": "docker pull -q $IMAGE\ndocker pull -q paritytech/awscli\n"
+          },
+          {
+            "name": "Upload ${{ inputs.file_name }}",
+            "id": "upload",
+            "env": {
+              "IMAGE": "${{ inputs.image }}",
+              "MODE": "${{ inputs.mode }}",
+              "FILE": "${{ inputs.file_name }}",
+              "FILES": "${{ inputs.files }}",
+              "AWS_ACCESS_KEY_ID": "${{ inputs.aws_access_key_id }}",
+              "AWS_SECRET_ACCESS_KEY": "${{ inputs.aws_secret_access_key }}",
+              "AWS_REGION": "${{ inputs.aws_region }}",
+              "AWS_BUCKET": "${{ inputs.aws_bucket }}",
+              "PRODUCT": "${{ inputs.product }}",
+              "ARCH": "${{ inputs.arch }}",
+              "TAG": "${{ inputs.tag }}",
+              "OVERWRITE": "${{inputs.overwrite}}",
+              "DRY": "${{inputs.dry}}",
+              "SHA256": "${{inputs.sha256}}"
+            },
+            "shell": "bash",
+            "run": ". ./action/release/artifacts/upload/lib.sh\necho \"MODE set to $MODE\"\ncheck_mode_inputs $MODE\n\nshow_versions\n\nmain\n\ncheck_s3\n"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Walking Git tag",
+      "author": "Martin Pugh (pugh@s3kr.it)",
+      "description": "Update (or create) a walking Git tag, i.e. a tag that moves to a new commit.",
+      "branding": {
+        "icon": "tag",
+        "color": "blue"
+      },
+      "inputs": {
+        "tag-name": {
+          "description": "Name of the tag to update",
+          "required": true
+        },
+        "tag-message": {
+          "description": "Message of the tag to update",
+          "required": true
+        }
+      },
+      "runs": {
+        "using": "docker",
+        "image": "Dockerfile"
+      }
+    }
+  ]
+}

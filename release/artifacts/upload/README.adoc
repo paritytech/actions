@@ -1,0 +1,29 @@
+= Upload GHA
+
+== Description
+
+This Github Action (GHA) helps upload artifacts to S3. it does it in a predictable way in order to provide a consistent structure of the artifacts.
+
+This GHA also contains some helpers to help you:
+- overwrite or prevent overwrite of existing artifacts
+- generate checksums
+
+== GHA Modes
+
+The GHA offers 3 modes. It is critical that you understand those before using the action.
+You can find a summary below or check the latest documentation with:
+```
+alias release-scripts='podman run --rm -it paritytech/releng-scripts'
+release-scripts upload --help
+```
+
+While the `release-scripts upload` command allows 3 modes, this GHA adds a layer on top iot it and expose `modes` that may slighty differ or hide the options of the underlying tool.
+
+- `release REPOSITORY VERSION`: Upload the GitHub Release artifacts for a given REPOSITORY and VERSION
+- `gha`: This operation is meant to be used from inside of GitHub Workflows. It does
+    not require arguments because it leverages the environment variables present
+    in GitHub Workflows
+- `standard PRODUCT VERSION [ARCH]`: While the underlying tool allows any custom directory, the GHA takes care of building a standard custom path based on the product name, its version and architecture
+- `custom DIRECTORY`: This option is currenlty not supported and will likely not be available
+
+include::action.adoc[]

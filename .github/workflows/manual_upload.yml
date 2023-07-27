@@ -1,0 +1,98 @@
+name: Manual Upload
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: Upload mode. WARNING Not all modes are supported yet.
+        type: choice
+        options:
+          - standard
+          - gha
+          - release
+        default: standard
+        required: true
+
+      region:
+        type: choice
+        description: The region to be used
+        options:
+          - eu-central-1
+          - us-east-1
+        default: eu-central-1
+
+      bucket:
+        description: Bucket to be used
+        required: true
+        default: test-parity-release-engineering
+
+
+      # MODE: Required in mode "standard"
+      product:
+        description: The name of the product/project
+        required: true
+        default: product
+
+      # MODE: Required in mode "standard"
+      tag:
+        description: The version of your artifacts
+        required: true
+        default: v1.2.3
+
+      # MODE: Required in mode "standard"
+      arch:
+        description: The arch
+        required: false
+        default: x86_64
+
+      file_name:
+        description: The file is generated but you can rename it for testing
+        required: true
+        default: foo.txt
+
+      overwrite:
+        type: boolean
+        description: Overwrite artifacts
+        required: true
+        default: false
+
+      sha256:
+        type: boolean
+        description: Generate a sha256 checksum
+        required: true
+        default: false
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  manual_upload:
+    name: Manual upload - mode=${{ github.event.inputs.mode }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Fetch GHA
+        uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # v3.1.0
+        with:
+          path: action
+
+      - name: Prepare test file
+        run: |
+          echo "foobar" > foo.txt
+          ls -al --color
+
+      - name: Upload file
+        uses: ./action/release/artifacts/upload
+        with:
+          mode: ${{ github.event.inputs.mode }}
+          product: ${{ github.event.inputs.product }}
+          tag: ${{ github.event.inputs.tag }}
+          arch: ${{ github.event.inputs.arch }}
+          aws_access_key_id: ${{ secrets.aws_access_key_id }}
+          aws_secret_access_key: ${{ secrets.aws_secret_access_key }}
+          aws_region: ${{ github.event.inputs.region }}
+          aws_bucket: ${{ github.event.inputs.bucket }}
+          file_name: ${{ github.event.inputs.file_name }}
+          overwrite: ${{ github.event.inputs.overwrite }}
+          sha256: ${{ github.event.inputs.sha256 }}

@@ -1,0 +1,40 @@
+name: Upload Release
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  upload:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        file_name: ["foo.txt", "bar.txt"]
+
+    steps:
+      - name: Fetch GHA
+        uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # v3.1.0
+        with:
+          path: action
+
+      - name: Prepare test file ${{ matrix.file_name }}
+        run: |
+          echo "foobar" > ${{ matrix.file_name }}
+          ls -al --color
+
+      - name: Upload GHA - file ${{ matrix.file_name }}
+        uses: ./action/release/artifacts/upload
+        with:
+          mode: release
+          aws_access_key_id: ${{ secrets.aws_access_key_id }}
+          aws_secret_access_key: ${{ secrets.aws_secret_access_key }}
+          aws_bucket: test-parity-release-engineering
+          file_name: "${{ matrix.file_name }}"
+          # You need the following if you want to be able to re-run your workflows
+          overwrite: true

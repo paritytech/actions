@@ -1,0 +1,26 @@
+name: matrix-message
+description: Send a message to a matrix channel
+author: Martin Pugh (pugh@s3kr.it)
+inputs:
+  server:
+    description: Matrix server hostname
+    default: "matrix.org"
+    required: false
+  room_id:
+    description: Matrix room ID, specified in channels advanced settings
+    default: ""
+    required: true
+  access_token:
+    description: Access token required to send to matrix server
+    default: ""
+    required: true
+  message:
+    description: Message to send in plaintext format
+    default: ""
+    required: true
+runs:
+  using: docker
+  image: 'Dockerfile'
+branding:
+  icon: 'message-square'
+  color: 'gray-dark'

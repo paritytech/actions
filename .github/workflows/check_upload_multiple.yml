@@ -1,0 +1,67 @@
+name: Upload multiple
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  upload:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Fetch GHA
+        uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8 # v3.1.0
+        with:
+          path: action
+
+      - name: Install tooling
+        run: |
+          sudo apt update -y
+          sudo apt install -y tree
+          docker --version
+
+      - name: Prepare test files
+        run: |
+          mkdir -p samples/files/a
+          mkdir -p samples/files/b
+          date > samples/files/a/foo.txt
+          date > samples/files/a/foo.bin
+          date > samples/files/a/bar.txt
+          date > samples/test.txt
+          date > samples/files/test.txt
+
+          ls -al --color
+          tree samples
+
+      - name: Upload Multiple 1
+        uses: ./action/release/artifacts/upload
+        with:
+          mode: standard
+          product: testing
+          tag: multiple
+          aws_access_key_id: ${{ secrets.aws_access_key_id }}
+          aws_secret_access_key: ${{ secrets.aws_secret_access_key }}
+          aws_bucket: test-parity-release-engineering
+          files: "*.txt"
+          # You need the following if you want to be able to re-run your workflows
+          overwrite: true
+
+      - name: Upload Multiple 2
+        uses: ./action/release/artifacts/upload
+        with:
+          mode: standard
+          product: testing
+          tag: multiple
+          aws_access_key_id: ${{ secrets.aws_access_key_id }}
+          aws_secret_access_key: ${{ secrets.aws_secret_access_key }}
+          aws_bucket: test-parity-release-engineering
+          files: |
+            *.txt
+            !foo.txt
+          # You need the following if you want to be able to re-run your workflows
+          overwrite: true
