@@ -8,6 +8,8 @@ A collection of custom GitHub actions and examples.
 
 -   `Upload` from `Wilfried Kopp <chevdor@gmail.com>`: Upload artifacts
 
+-   `Walking Git tag` from `Martin Pugh (pugh@s3kr.it)`: Update (or create) a walking Git tag, i.e. a tag that moves to a new commit.
+
 -   `matrix-message` from `Martin Pugh (pugh@s3kr.it)`: Send a message to a matrix channel
 
 ## matrix-message
@@ -109,6 +111,20 @@ Upload artifacts
 ### Outputs
 
 -   `[url]`: URL of the uploaded artifact
+
+## Walking Git tag
+
+Update (or create) a walking Git tag, i.e. a tag that moves to a new commit.
+
+### Inputs
+
+-   `tag-message`: Message of the tag to update
+
+-   `tag-name`: Name of the tag to update
+
+### Outputs
+
+No outputs.
 
 ## Dev notes
 

@@ -1,7 +1,8 @@
 name: Walking Git tag
+author: Martin Pugh (pugh@s3kr.it)
 description: Update (or create) a walking Git tag, i.e. a tag that moves to a new commit.
 branding:
-  icon: 'tag'  
+  icon: 'tag'
   color: 'blue'
 inputs:
   tag-name:
